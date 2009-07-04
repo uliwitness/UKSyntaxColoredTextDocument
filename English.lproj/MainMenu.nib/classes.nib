@@ -1,0 +1,72 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                indentSelection = id; 
+                recolorCompleteFile = id; 
+                showGoToPanel = id; 
+                takeSyntaxDefinitionFilenameFromTagOf = id; 
+                toggleAutoSyntaxColoring = id; 
+                toggleMaintainIndentation = id; 
+                unindentSelection = id; 
+            }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                resetColors = id; 
+                takeComments2ColorFrom = id; 
+                takeCommentsColorFrom = id; 
+                takeIdentifiers2ColorFrom = id; 
+                takeIdentifiersColorFrom = id; 
+                takePreprocessorColorFrom = id; 
+                takeStringsColorFrom = id; 
+                takeTagsColorFrom = id; 
+            }; 
+            CLASS = UKSCTDColorWellPrefsController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                comments2Color = NSColorWell; 
+                commentsColor = NSColorWell; 
+                identifiers2Color = NSColorWell; 
+                identifiersColor = NSColorWell; 
+                preprocessorColor = NSColorWell; 
+                stringsColor = NSColorWell; 
+                tagsColor = NSColorWell; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {createNewIdentifier = id; deleteIdentifier = id; }; 
+            CLASS = UKSCTDUserIdentifiersPrefsController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {identifiersList = NSTableView; removeButton = NSButton; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                indentSelection = id; 
+                recolorCompleteFile = id; 
+                recolorCompleteFileDeferred = id; 
+                recolorSyntaxTimer = id; 
+                showGoToPanel = id; 
+                toggleAutoSyntaxColoring = id; 
+                toggleMaintainIndentation = id; 
+                unindentSelection = id; 
+            }; 
+            CLASS = UKSyntaxColoredTextDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                gotoPanel = UKTextDocGoToBox; 
+                progress = NSProgressIndicator; 
+                selectionKindImage = NSImageView; 
+                status = NSTextField; 
+                textView = NSTextView; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }
+    ); 
+    IBVersion = 1; 
+}
