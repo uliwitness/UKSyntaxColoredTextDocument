@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3D1A27F6058B611800E623FD /* UKSyntaxColoredTextDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = 3D1A27F4058B611800E623FD /* UKSyntaxColoredTextDocument.nib */; };
 		3D1A2808058B947200E623FD /* SyntaxColorDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3D1A2807058B947200E623FD /* SyntaxColorDefaults.plist */; };
 		3D1A2836058BA91800E623FD /* UKTextDocGoToBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D1A2834058BA91800E623FD /* UKTextDocGoToBox.h */; };
 		3D1A2837058BA91800E623FD /* UKTextDocGoToBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D1A2835058BA91800E623FD /* UKTextDocGoToBox.m */; };
@@ -23,16 +22,17 @@
 		3D70D4CB065A179C006EC8D8 /* NSMenu+DeepSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D70D4C9065A179C006EC8D8 /* NSMenu+DeepSearch.h */; };
 		3D70D4CC065A179C006EC8D8 /* NSMenu+DeepSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D70D4CA065A179C006EC8D8 /* NSMenu+DeepSearch.m */; };
 		3D70D4D3065A1C29006EC8D8 /* Syntax Definitions in Resources */ = {isa = PBXBuildFile; fileRef = 3D70D4CD065A1C28006EC8D8 /* Syntax Definitions */; };
-		3DBD9D29065A9C31009A2536 /* UKMultiSyntaxColoredTextDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = 3DBD9D27065A9C31009A2536 /* UKMultiSyntaxColoredTextDocument.nib */; };
 		3DCE61A40655566B00B36B62 /* UKSCTDColorWellPrefsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DCE61A20655566B00B36B62 /* UKSCTDColorWellPrefsController.h */; };
 		3DCE61A50655566B00B36B62 /* UKSCTDColorWellPrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DCE61A30655566B00B36B62 /* UKSCTDColorWellPrefsController.m */; };
 		3DFECEC606558AD20059B4E8 /* SelectionRange.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 3DFECEC406558AD20059B4E8 /* SelectionRange.tiff */; };
 		3DFECEC706558AD20059B4E8 /* InsertionMark.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 3DFECEC506558AD20059B4E8 /* InsertionMark.tiff */; };
 		3DFECED2065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DFECED0065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h */; };
 		3DFECED3065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DFECED1065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m */; };
+		55D9D77C112DDF18001ADF29 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55D9D77A112DDF18001ADF29 /* MainMenu.xib */; };
+		55D9D780112DDF34001ADF29 /* UKSyntaxColoredTextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55D9D77E112DDF34001ADF29 /* UKSyntaxColoredTextDocument.xib */; };
+		55D9D784112DDF44001ADF29 /* UKMultiSyntaxColoredTextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55D9D782112DDF44001ADF29 /* UKMultiSyntaxColoredTextDocument.xib */; };
 		8D15AC290486D014006FF6A4 /* UKSyntaxColoredDocument_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 32DBCF750370BD2300C91783 /* UKSyntaxColoredDocument_Prefix.pch */; };
 		8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */; };
-		8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */; };
 		8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165FFE840EACC02AAC07 /* InfoPlist.strings */; };
 		8D15AC320486D014006FF6A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A37F4B0FDCFA73011CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
@@ -42,12 +42,10 @@
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		2A37F4B0FDCFA73011CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		2A37F4B7FDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		2A37F4BAFDCFA73011CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = English; path = English.lproj/Credits.rtf; sourceTree = "<group>"; };
 		2A37F4C4FDCFA73011CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		2A37F4C5FDCFA73011CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32DBCF750370BD2300C91783 /* UKSyntaxColoredDocument_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKSyntaxColoredDocument_Prefix.pch; sourceTree = "<group>"; };
-		3D1A27F5058B611800E623FD /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/UKSyntaxColoredTextDocument.nib; sourceTree = "<group>"; };
 		3D1A2807058B947200E623FD /* SyntaxColorDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist; path = SyntaxColorDefaults.plist; sourceTree = "<group>"; };
 		3D1A2834058BA91800E623FD /* UKTextDocGoToBox.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UKTextDocGoToBox.h; sourceTree = "<group>"; };
 		3D1A2835058BA91800E623FD /* UKTextDocGoToBox.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = UKTextDocGoToBox.m; sourceTree = "<group>"; };
@@ -64,13 +62,15 @@
 		3D70D4C9065A179C006EC8D8 /* NSMenu+DeepSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMenu+DeepSearch.h"; sourceTree = "<group>"; };
 		3D70D4CA065A179C006EC8D8 /* NSMenu+DeepSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMenu+DeepSearch.m"; sourceTree = "<group>"; };
 		3D70D4CD065A1C28006EC8D8 /* Syntax Definitions */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Syntax Definitions"; sourceTree = "<group>"; };
-		3DBD9D28065A9C31009A2536 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/UKMultiSyntaxColoredTextDocument.nib; sourceTree = "<group>"; };
 		3DCE61A20655566B00B36B62 /* UKSCTDColorWellPrefsController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = UKSCTDColorWellPrefsController.h; sourceTree = "<group>"; };
 		3DCE61A30655566B00B36B62 /* UKSCTDColorWellPrefsController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = UKSCTDColorWellPrefsController.m; sourceTree = "<group>"; };
 		3DFECEC406558AD20059B4E8 /* SelectionRange.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = SelectionRange.tiff; sourceTree = "<group>"; };
 		3DFECEC506558AD20059B4E8 /* InsertionMark.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = InsertionMark.tiff; sourceTree = "<group>"; };
 		3DFECED0065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKSCTDUserIdentifiersPrefsController.h; sourceTree = "<group>"; };
 		3DFECED1065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKSCTDUserIdentifiersPrefsController.m; sourceTree = "<group>"; };
+		55D9D77B112DDF18001ADF29 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		55D9D77F112DDF34001ADF29 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/UKSyntaxColoredTextDocument.xib; sourceTree = "<group>"; };
+		55D9D783112DDF44001ADF29 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/UKMultiSyntaxColoredTextDocument.xib; sourceTree = "<group>"; };
 		8D15AC360486D014006FF6A4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D15AC370486D014006FF6A4 /* UKSyntaxColoredDocument.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UKSyntaxColoredDocument.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -154,9 +154,9 @@
 			children = (
 				3D70D4CD065A1C28006EC8D8 /* Syntax Definitions */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
-				2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */,
-				3D1A27F4058B611800E623FD /* UKSyntaxColoredTextDocument.nib */,
-				3DBD9D27065A9C31009A2536 /* UKMultiSyntaxColoredTextDocument.nib */,
+				55D9D77A112DDF18001ADF29 /* MainMenu.xib */,
+				55D9D77E112DDF34001ADF29 /* UKSyntaxColoredTextDocument.xib */,
+				55D9D782112DDF44001ADF29 /* UKMultiSyntaxColoredTextDocument.xib */,
 				3DFECEC406558AD20059B4E8 /* SelectionRange.tiff */,
 				3DFECEC506558AD20059B4E8 /* InsertionMark.tiff */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
@@ -264,15 +264,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC2C0486D014006FF6A4 /* Credits.rtf in Resources */,
-				8D15AC2D0486D014006FF6A4 /* MainMenu.nib in Resources */,
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
-				3D1A27F6058B611800E623FD /* UKSyntaxColoredTextDocument.nib in Resources */,
 				3D1A2808058B947200E623FD /* SyntaxColorDefaults.plist in Resources */,
 				3D1A2A02058BC64100E623FD /* SyntaxDefinition.plist in Resources */,
 				3DFECEC606558AD20059B4E8 /* SelectionRange.tiff in Resources */,
 				3DFECEC706558AD20059B4E8 /* InsertionMark.tiff in Resources */,
 				3D70D4D3065A1C29006EC8D8 /* Syntax Definitions in Resources */,
-				3DBD9D29065A9C31009A2536 /* UKMultiSyntaxColoredTextDocument.nib in Resources */,
+				55D9D77C112DDF18001ADF29 /* MainMenu.xib in Resources */,
+				55D9D780112DDF34001ADF29 /* UKSyntaxColoredTextDocument.xib in Resources */,
+				55D9D784112DDF44001ADF29 /* UKMultiSyntaxColoredTextDocument.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -306,14 +306,6 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		2A37F4B6FDCFA73011CA2CEA /* MainMenu.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				2A37F4B7FDCFA73011CA2CEA /* English */,
-			);
-			name = MainMenu.nib;
-			sourceTree = "<group>";
-		};
 		2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -322,20 +314,28 @@
 			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
-		3D1A27F4058B611800E623FD /* UKSyntaxColoredTextDocument.nib */ = {
+		55D9D77A112DDF18001ADF29 /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				3D1A27F5058B611800E623FD /* English */,
+				55D9D77B112DDF18001ADF29 /* English */,
 			);
-			name = UKSyntaxColoredTextDocument.nib;
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
-		3DBD9D27065A9C31009A2536 /* UKMultiSyntaxColoredTextDocument.nib */ = {
+		55D9D77E112DDF34001ADF29 /* UKSyntaxColoredTextDocument.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				3DBD9D28065A9C31009A2536 /* English */,
+				55D9D77F112DDF34001ADF29 /* English */,
 			);
-			name = UKMultiSyntaxColoredTextDocument.nib;
+			name = UKSyntaxColoredTextDocument.xib;
+			sourceTree = "<group>";
+		};
+		55D9D782112DDF44001ADF29 /* UKMultiSyntaxColoredTextDocument.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				55D9D783112DDF44001ADF29 /* English */,
+			);
+			name = UKMultiSyntaxColoredTextDocument.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
