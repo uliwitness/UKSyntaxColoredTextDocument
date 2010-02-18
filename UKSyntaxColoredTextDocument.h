@@ -60,6 +60,7 @@
 -(IBAction) showGoToPanel: (id)sender;
 -(IBAction) indentSelection: (id)sender;
 -(IBAction) unindentSelection: (id)sender;
+-(IBAction)	toggleCommentForSelection: (id)sender;
 
 -(void)		setAutoSyntaxColoring: (BOOL)state;
 -(BOOL)		autoSyntaxColoring;

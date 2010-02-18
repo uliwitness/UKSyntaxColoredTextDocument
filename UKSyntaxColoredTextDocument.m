@@ -638,6 +638,106 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 }
 
 
+/* -----------------------------------------------------------------------------
+	toggleCommentForSelection:
+		Add a comment to the start of this line/remove an existing comment.
+   -------------------------------------------------------------------------- */
+
+-(IBAction)	toggleCommentForSelection: (id)sender
+{
+	[[self undoManager] registerUndoWithTarget: self selector: @selector(toggleCommentForSelection:) object: nil];
+	
+	NSRange				selRange = [textView selectedRange];
+	unsigned			x;
+	NSMutableString*	str = [[textView textStorage] mutableString];
+	
+	if( selRange.length == 0 )
+		selRange.length++;
+	
+//	NSLog(@"selection %d,%d", selRange.location, selRange.length);
+	
+	// Are we at the end of a line?
+	if ([str characterAtIndex:selRange.location] == '\n' ||
+			[str characterAtIndex:selRange.location] == '\r') 
+	{
+		if( selRange.location > 0 )
+		{
+			selRange.location--;
+			selRange.length++;
+		}
+	}
+	
+	// Move the selection to the start of a line
+	while (selRange.location >= 0)
+	{
+//		NSLog(@"Checking charater %c", [str characterAtIndex:selRange.location]);
+		if ([str characterAtIndex:selRange.location] == '\n' || [str characterAtIndex:selRange.location] == '\r')
+		{
+			selRange.location++;
+			selRange.length--;
+			break;
+		}
+		selRange.location--;
+		selRange.length++;
+	}
+
+	// Select up to the end of a line
+	while ( (selRange.location+selRange.length-1) < [str length]  &&
+				 !([str characterAtIndex:selRange.location+selRange.length-1] == '\n' ||
+					 [str characterAtIndex:selRange.location+selRange.length-1] == '\r')) 
+	{
+		selRange.length++;
+	}
+	
+	if (selRange.length == 0)
+		return;
+	
+	// Unselect any trailing returns so we don't indent the next line after a full-line selection.
+	while([str characterAtIndex:selRange.location+selRange.length-1] == '\n' ||
+				[str characterAtIndex:selRange.location+selRange.length-1] == '\r')
+	{
+		selRange.length--;
+	}
+	
+	
+//	NSLog(@"Selected range: '%@'", [str substringWithRange:selRange]);
+	NSRange nuSelRange = selRange;
+	
+	for( x = selRange.location +selRange.length -1; x >= selRange.location; x-- )
+	{
+		if( [str characterAtIndex: x] == '\n'
+			 || [str characterAtIndex: x] == '\r' )
+		{
+//			NSLog(@"Checking char %c", [str characterAtIndex:x+1]);
+			if( [str characterAtIndex:x+1] == '%' )
+			{
+				[str deleteCharactersInRange:NSMakeRange(x+1, 1)];
+				nuSelRange.length--;
+			}
+			else
+			{
+				[str insertString: @"%" atIndex: x+1];
+				nuSelRange.length++;
+			}
+		}
+		
+		if( x == 0 )
+			break;
+	}
+	
+	if( [str characterAtIndex:nuSelRange.location] == '%' )
+	{
+		[str deleteCharactersInRange:NSMakeRange( nuSelRange.location, 1 )];
+		nuSelRange.length--;
+	}
+	else
+	{		
+		[str insertString: @"%" atIndex: nuSelRange.location];
+		nuSelRange.length++;
+	}
+	[textView setSelectedRange: nuSelRange];
+}
+
 
 /* -----------------------------------------------------------------------------
 	validateMenuItem:
