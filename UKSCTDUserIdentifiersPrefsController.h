@@ -35,6 +35,8 @@
 -(IBAction) createNewIdentifier: (id)sender;		// Action for "Add" button.
 -(IBAction) deleteIdentifier: (id)sender;			// Action for "Remove" button.
 
+-(void) tableViewSelectionDidChange:(NSNotification *)notification;
+
 // Private:
 -(NSMutableArray*)  identifiers;					// Accessor that lazily instantiates the "identifiers" array when first needed.
 
