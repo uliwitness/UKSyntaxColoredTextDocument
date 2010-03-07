@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>OneLineCommentPrefix</key>
+	<string>// </string>
 	<key>Components</key>
 	<array>
 		<dict>
@@ -12,13 +14,13 @@
 				<integer>1</integer>
 			</array>
 			<key>End</key>
-			<string>"</string>
+			<string>&quot;</string>
 			<key>EscapeChar</key>
 			<string>\</string>
 			<key>Name</key>
 			<string>Strings</string>
 			<key>Start</key>
-			<string>"</string>
+			<string>&quot;</string>
 			<key>Type</key>
 			<string>String</string>
 		</dict>
@@ -27,9 +29,9 @@
 			<string>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz@_1234567890</string>
 			<key>Color</key>
 			<array>
-				<real>0.20000000000000001</real>
+				<real>0.2</real>
 				<real>0.5</real>
-				<real>0.20000000000000001</real>
+				<real>0.2</real>
 			</array>
 			<key>Keywords</key>
 			<array>
@@ -39,14 +41,24 @@
 				<string>self</string>
 				<string>return</string>
 				<string>@selector</string>
+				<string>@encode</string>
 				<string>@interface</string>
-				<string>@protocol</string>
 				<string>@implementation</string>
+				<string>@protocol</string>
+				<string>@end</string>
+				<string>@property</string>
+				<string>@synthesize</string>
+				<string>@synchronized</string>
 				<string>@class</string>
 				<string>@try</string>
 				<string>@catch</string>
 				<string>@finally</string>
+				<string>@private</string>
+				<string>@protected</string>
+				<string>@required</string>
+				<string>@optional</string>
 				<string>enum</string>
+				<string>in</string>
 				<string>typedef</string>
 				<string>unsigned</string>
 				<string>signed</string>
@@ -57,7 +69,6 @@
 				<string>short</string>
 				<string>float</string>
 				<string>double</string>
-				<string>@end</string>
 				<string>nil</string>
 				<string>else</string>
 				<string>if</string>

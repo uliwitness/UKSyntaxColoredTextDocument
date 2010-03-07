@@ -554,9 +554,19 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 }
 
 
+-(void)	restoreText: (NSString*)textToRestore
+{
+	[[self undoManager] disableUndoRegistration];
+	[textView setString: textToRestore];
+	[[self undoManager] enableUndoRegistration];
+}
+
+
 -(IBAction) indentSelection: (id)sender
 {
-	[[self undoManager] registerUndoWithTarget: self selector: @selector(unindentSelection:) object: nil];
+	[[self undoManager] beginUndoGrouping];
+	NSString*	prevText = [[[[textView textStorage] string] copy] autorelease];
+	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
 	
 	NSRange				selRange = [textView selectedRange],
 						nuSelRange = selRange;
@@ -584,6 +594,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	[str insertString: @"\t" atIndex: nuSelRange.location];
 	nuSelRange.length++;
 	[textView setSelectedRange: nuSelRange];
+	[[self undoManager] endUndoGrouping];
 }
 
 
@@ -603,8 +614,10 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	if( selRange.length == 0 )
 		return;
 	
-	[[self undoManager] registerUndoWithTarget: self selector: @selector(indentSelection:) object: nil];
-	
+	[[self undoManager] beginUndoGrouping];
+	NSString*	prevText = [[[[textView textStorage] string] copy] autorelease];
+	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
+		
 	for( x = lastIndex; x >= selRange.location; x-- )
 	{
 		if( [str characterAtIndex: x] == '\n'
@@ -651,6 +664,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	}
 	
 	[textView setSelectedRange: nuSelRange];
+	[[self undoManager] endUndoGrouping];
 }
 
 
@@ -661,8 +675,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 -(IBAction)	toggleCommentForSelection: (id)sender
 {
-	[[self undoManager] registerUndoWithTarget: self selector: @selector(toggleCommentForSelection:) object: nil];
-	
 	NSRange				selRange = [textView selectedRange];
 	unsigned			x;
 	NSMutableString*	str = [[textView textStorage] mutableString];
@@ -670,11 +682,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	if( selRange.length == 0 )
 		selRange.length++;
 	
-//	NSLog(@"selection %d,%d", selRange.location, selRange.length);
-	
 	// Are we at the end of a line?
-	if ([str characterAtIndex:selRange.location] == '\n' ||
-			[str characterAtIndex:selRange.location] == '\r') 
+	if ([str characterAtIndex: selRange.location] == '\n' ||
+			[str characterAtIndex: selRange.location] == '\r') 
 	{
 		if( selRange.location > 0 )
 		{
@@ -684,10 +694,10 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	}
 	
 	// Move the selection to the start of a line
-	while (selRange.location >= 0)
+	while( selRange.location > 0 )
 	{
-//		NSLog(@"Checking charater %c", [str characterAtIndex:selRange.location]);
-		if ([str characterAtIndex:selRange.location] == '\n' || [str characterAtIndex:selRange.location] == '\r')
+		if( [str characterAtIndex: selRange.location] == '\n'
+			|| [str characterAtIndex: selRange.location] == '\r')
 		{
 			selRange.location++;
 			selRange.length--;
@@ -698,9 +708,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	}
 
 	// Select up to the end of a line
-	while ( (selRange.location+selRange.length-1) < [str length]  &&
-				 !([str characterAtIndex:selRange.location+selRange.length-1] == '\n' ||
-					 [str characterAtIndex:selRange.location+selRange.length-1] == '\r')) 
+	while ( (selRange.location +selRange.length) < [str length]  
+				&& !([str characterAtIndex:selRange.location+selRange.length-1] == '\n' 
+					|| [str characterAtIndex:selRange.location+selRange.length-1] == '\r') ) 
 	{
 		selRange.length++;
 	}
@@ -708,32 +718,57 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	if (selRange.length == 0)
 		return;
 	
-	// Unselect any trailing returns so we don't indent the next line after a full-line selection.
-	while([str characterAtIndex:selRange.location+selRange.length-1] == '\n' ||
-				[str characterAtIndex:selRange.location+selRange.length-1] == '\r')
+	[[self undoManager] beginUndoGrouping];
+	NSString*	prevText = [[[[textView textStorage] string] copy] autorelease];
+	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
+	
+	// Unselect any trailing returns so we don't comment the next line after a full-line selection.
+	while( [str characterAtIndex: selRange.location +selRange.length -1] == '\n' ||
+				[str characterAtIndex: selRange.location +selRange.length -1] == '\r'
+				&& selRange.length > 0 )
 	{
 		selRange.length--;
 	}
 	
 	
-//	NSLog(@"Selected range: '%@'", [str substringWithRange:selRange]);
 	NSRange nuSelRange = selRange;
+	
+	NSString*	commentPrefix = [[self syntaxDefinitionDictionary] objectForKey: @"OneLineCommentPrefix"];
+	if( !commentPrefix || [commentPrefix length] == 0 )
+		commentPrefix = @"# ";
+	NSInteger	commentPrefixLength = [commentPrefix length];
+	NSString*	trimmedCommentPrefix = [commentPrefix stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
+	if( !trimmedCommentPrefix || [trimmedCommentPrefix length] == 0 )	// Comments apparently *are* whitespace.
+		trimmedCommentPrefix = commentPrefix;
+	NSInteger	trimmedCommentPrefixLength = [trimmedCommentPrefix length];
 	
 	for( x = selRange.location +selRange.length -1; x >= selRange.location; x-- )
 	{
-		if( [str characterAtIndex: x] == '\n'
-			 || [str characterAtIndex: x] == '\r' )
+		BOOL	hitEnd = (x == selRange.location);
+		BOOL	hitLineBreak = [str characterAtIndex: x] == '\n' || [str characterAtIndex: x] == '\r';
+		if( hitLineBreak || hitEnd )
 		{
-//			NSLog(@"Checking char %c", [str characterAtIndex:x+1]);
-			if( [str characterAtIndex:x+1] == '%' )
+			NSUInteger	startOffs = x+1;
+			if( hitEnd && !hitLineBreak )
+				startOffs = x;
+			NSInteger	possibleCommentLength = 0;
+			if( commentPrefixLength <= (selRange.length +selRange.location -startOffs) )
+				possibleCommentLength = commentPrefixLength;
+			else if( trimmedCommentPrefixLength <= (selRange.length +selRange.location -startOffs) )
+				possibleCommentLength = trimmedCommentPrefixLength;
+			
+			NSString	*	lineStart = [str substringWithRange: NSMakeRange( startOffs, possibleCommentLength )];
+			BOOL			haveWhitespaceToo = [lineStart hasPrefix: commentPrefix];
+			if( [lineStart hasPrefix: trimmedCommentPrefix] )
 			{
-				[str deleteCharactersInRange:NSMakeRange(x+1, 1)];
-				nuSelRange.length--;
+				NSInteger	commentLength = haveWhitespaceToo ? commentPrefixLength : trimmedCommentPrefixLength;
+				[str deleteCharactersInRange: NSMakeRange(startOffs, commentLength)];
+				nuSelRange.length -= commentLength;
 			}
 			else
 			{
-				[str insertString: @"%" atIndex: x+1];
-				nuSelRange.length++;
+				[str insertString: commentPrefix atIndex: startOffs];
+				nuSelRange.length += commentPrefixLength;
 			}
 		}
 		
@@ -741,17 +776,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			break;
 	}
 	
-	if( [str characterAtIndex:nuSelRange.location] == '%' )
-	{
-		[str deleteCharactersInRange:NSMakeRange( nuSelRange.location, 1 )];
-		nuSelRange.length--;
-	}
-	else
-	{		
-		[str insertString: @"%" atIndex: nuSelRange.location];
-		nuSelRange.length++;
-	}
 	[textView setSelectedRange: nuSelRange];
+	[[self undoManager] endUndoGrouping];
+	
 }
 
 

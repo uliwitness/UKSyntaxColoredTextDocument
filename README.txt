@@ -26,7 +26,9 @@ ADAPTING TO OTHER PROGRAMMING LANGUAGES
 To adapt the syntax coloring to another language, change the
 SyntaxDefinition.plist file using Apple's Property List Editor. A syntax
 definition file is an NSDictionary saved as a property list (and can thus be
-edited using Apple's Property List Editor). It currently contains two entries.
+edited using Apple's Property List Editor). It currently contains two required
+entries.
+
 The first has the key "Components", which is an array of dictionaries each
 describing one "thing" that can be colorized. Here's what the various keys mean:
 
@@ -82,6 +84,19 @@ a comment will get the comment color, because that color was applied last.
 The second entry is "FileNameSuffixes", which is an array of strings, each
 designating one file name extension which UKMultiSyntaxColoredTextDocument will
 use to determine the syntax coloring file to use for an opened file.
+
+Currently, you can also put the following optional keys in the dictionary:
+
+OneLineCommentPrefix	-	A string that will be used by the action method
+							-toggleCommentForSelection: to determine what
+							comment character sequence to look for/to add.
+							Note that if this entry has leading or trailing
+							whitespace, that whitespace will be added when
+							inserting a new comment, but when trying to determine
+							whether a line has a comment that should be removed,
+							it will also match the string without the whitespace.
+							This could cause problems in languages where
+							whitespace is syntactically relevant.
 
 
 WHAT LICENSE IS THIS UNDER?
