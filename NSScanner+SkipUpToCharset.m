@@ -9,7 +9,7 @@
 #import "NSScanner+SkipUpToCharset.h"
 
 
-@implementation NSScanner (SkipUpToCharset)
+@implementation NSScanner (UKSkipUpToCharset)
 
 -(BOOL) skipUpToCharactersFromSet:(NSCharacterSet*)set
 {
