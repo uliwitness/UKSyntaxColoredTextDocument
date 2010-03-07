@@ -86,23 +86,26 @@ use to determine the syntax coloring file to use for an opened file.
 
 WHAT LICENSE IS THIS UNDER?
 
-UKSyntaxColoredTextDocument is free for use in Freeware and in-house
-applications, as long as you put a notice somewhere visible (about screen is OK)
-in the application that states that you're using UKSyntaxColoredTextDocument
-(c) 2003-07 by M. Uli Kusterer.
+Copyright (c) 2003-2010 Uli Kusterer.
 
-For use in commercial products (including Shareware), contact me to obtain a license.
-Please include some information about the program you're using
-UKSyntaxColoredTextDocument in.
+This software is provided 'as-is', without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
 
-Another requirement for use of UKSyntaxColoredTextDocument is that you make any
-changes you do to the source code available to me so I can consider them for
-inclusion in the official distribution.
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
 
-You may distribute the source code as long as no more than the cost price
-of the actual transfer medium (online fees or media cost) are charged, and
-the code is unchanged, and this readme file is included. If you want to
-distribute this code otherwise, contact me to get a license.
+   1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+
+   2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+
+   3. This notice may not be removed or altered from any source
+   distribution.
 
 
 REVISIONS:
@@ -131,11 +134,7 @@ REVISIONS:
 CONTACT INFORMATION
 
 You can find the newest version of UKSyntaxColoredTextDocument at
-	http://www.zathras.de/sourcecode.htm
+	http://github.com/uliwitness/UKSyntaxColoredTextDocument
 
 E-Mail: witness_dot_of_dot_teachtext_at_gmx_dot_net
 
-
-
-
-M. Uli Kusterer, Heidelberg, 2007-04-21
