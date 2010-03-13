@@ -301,8 +301,8 @@
 									<reference key="NSSuperview" ref="995208394"/>
 									<bool key="NSEnabled">YES</bool>
 									<object class="NSTextFieldCell" key="NSCell" id="33388509">
-										<int key="NSCellFlags">67239424</int>
-										<int key="NSCellFlags2">4194304</int>
+										<int key="NSCellFlags">67239488</int>
+										<int key="NSCellFlags2">4196352</int>
 										<string key="NSContents">You can do anything if you want to. That's why we see so many people who can fly.</string>
 										<object class="NSFont" key="NSSupport">
 											<string key="NSName">LucidaGrande</string>
@@ -954,6 +954,7 @@
 					<string>63.IBShouldRemoveOnLegacySave</string>
 					<string>64.IBPluginDependency</string>
 					<string>64.IBShouldRemoveOnLegacySave</string>
+					<string>65.IBPluginDependency</string>
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1014,6 +1015,7 @@
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
