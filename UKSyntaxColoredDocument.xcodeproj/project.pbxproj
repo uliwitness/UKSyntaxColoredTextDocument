@@ -28,6 +28,8 @@
 		3DFECEC706558AD20059B4E8 /* InsertionMark.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 3DFECEC506558AD20059B4E8 /* InsertionMark.tiff */; };
 		3DFECED2065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DFECED0065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h */; };
 		3DFECED3065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DFECED1065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m */; };
+		55255A4B114C077D00279B03 /* UKSyntaxColoredTextViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 55255A49114C077D00279B03 /* UKSyntaxColoredTextViewController.h */; };
+		55255A4C114C077D00279B03 /* UKSyntaxColoredTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55255A4A114C077D00279B03 /* UKSyntaxColoredTextViewController.m */; };
 		55D9D77C112DDF18001ADF29 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55D9D77A112DDF18001ADF29 /* MainMenu.xib */; };
 		55D9D780112DDF34001ADF29 /* UKSyntaxColoredTextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55D9D77E112DDF34001ADF29 /* UKSyntaxColoredTextDocument.xib */; };
 		55D9D784112DDF44001ADF29 /* UKMultiSyntaxColoredTextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55D9D782112DDF44001ADF29 /* UKMultiSyntaxColoredTextDocument.xib */; };
@@ -70,6 +72,8 @@
 		3DFECEC506558AD20059B4E8 /* InsertionMark.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = InsertionMark.tiff; sourceTree = "<group>"; };
 		3DFECED0065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKSCTDUserIdentifiersPrefsController.h; sourceTree = "<group>"; };
 		3DFECED1065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKSCTDUserIdentifiersPrefsController.m; sourceTree = "<group>"; };
+		55255A49114C077D00279B03 /* UKSyntaxColoredTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKSyntaxColoredTextViewController.h; sourceTree = "<group>"; };
+		55255A4A114C077D00279B03 /* UKSyntaxColoredTextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKSyntaxColoredTextViewController.m; sourceTree = "<group>"; };
 		55D9D77B112DDF18001ADF29 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		55D9D77F112DDF34001ADF29 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/UKSyntaxColoredTextDocument.xib; sourceTree = "<group>"; };
 		55D9D783112DDF44001ADF29 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/UKMultiSyntaxColoredTextDocument.xib; sourceTree = "<group>"; };
@@ -132,6 +136,8 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				55255A49114C077D00279B03 /* UKSyntaxColoredTextViewController.h */,
+				55255A4A114C077D00279B03 /* UKSyntaxColoredTextViewController.m */,
 				3D5D9F3608873A3600058C2B /* UKSyntaxColoredTextDocument.h */,
 				3D5D9F3708873A3600058C2B /* UKSyntaxColoredTextDocument.m */,
 				3D70D4BB06594E70006EC8D8 /* UKMultiSyntaxColoredTextDocument.h */,
@@ -223,6 +229,7 @@
 				3D5D9F3808873A3600058C2B /* UKSyntaxColoredTextDocument.h in Headers */,
 				3D5D9F3C08873A4B00058C2B /* NSArray+Color.h in Headers */,
 				55F40EF71143C4E500B2BC40 /* UKSCTDGradientBar.h in Headers */,
+				55255A4B114C077D00279B03 /* UKSyntaxColoredTextViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,6 +307,7 @@
 				3D5D9F3908873A3600058C2B /* UKSyntaxColoredTextDocument.m in Sources */,
 				3D5D9F3D08873A4B00058C2B /* NSArray+Color.m in Sources */,
 				55F40EF81143C4E500B2BC40 /* UKSCTDGradientBar.m in Sources */,
+				55255A4C114C077D00279B03 /* UKSyntaxColoredTextViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
