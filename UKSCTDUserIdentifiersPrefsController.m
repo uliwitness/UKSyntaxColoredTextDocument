@@ -30,7 +30,7 @@
 // -----------------------------------------------------------------------------
 
 #import "UKSCTDUserIdentifiersPrefsController.h"
-#import "UKSyntaxColoredTextDocument.h"
+#import "UKSyntaxColoredTextViewController.h"
 
 
 @implementation UKSCTDUserIdentifiersPrefsController

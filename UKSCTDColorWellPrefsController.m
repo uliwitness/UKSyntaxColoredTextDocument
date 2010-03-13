@@ -31,7 +31,7 @@
 
 #import "UKSCTDColorWellPrefsController.h"
 #import "NSArray+Color.h"
-#import "UKSyntaxColoredTextDocument.h"
+#import "UKSyntaxColoredTextViewController.h"
 
 
 @implementation UKSCTDColorWellPrefsController
@@ -47,7 +47,7 @@
 
 -(void) awakeFromNib
 {
-	[UKSyntaxColoredTextDocument makeSurePrefsAreInited];
+	[UKSyntaxColoredTextViewController makeSurePrefsAreInited];
 	[self updateUIFromPrefs: self];
 }
 
