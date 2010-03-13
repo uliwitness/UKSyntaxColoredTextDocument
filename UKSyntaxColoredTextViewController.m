@@ -97,15 +97,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 }
 
 
-/* -----------------------------------------------------------------------------
-	loadView:
-		NIB has been loaded, fill the text view with our text and apply
-		initial syntax coloring.
-   -------------------------------------------------------------------------- */
-
--(void)	loadView
+-(void)	setUpSyntaxColoring
 {
-    [super loadView];
+	NSLog(@"setUpSyntaxColoring");	// +++
 	
 	// Set up some sensible defaults for syntax coloring:
 	[[self class] makeSurePrefsAreInited];
@@ -124,6 +118,32 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	// Make sure we can use "find" if we're on 10.3:
 	if( [TEXTVIEW respondsToSelector: @selector(setUsesFindPanel:)] )
 		[TEXTVIEW setUsesFindPanel: YES];
+
+}
+
+
+/* -----------------------------------------------------------------------------
+	awakeFromNib:
+		We didn't create our own view? Set up things!
+   -------------------------------------------------------------------------- */
+
+-(void)	awakeFromNib
+{
+	if( [self view] )
+		[self setUpSyntaxColoring];
+}
+
+
+/* -----------------------------------------------------------------------------
+	loadView:
+		NIB has been loaded, fill the text view with our text and apply
+		initial syntax coloring.
+   -------------------------------------------------------------------------- */
+
+-(void)	loadView
+{
+    [super loadView];
+	[self setUpSyntaxColoring];
 }
 
 
@@ -786,7 +806,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	@try
 	{
 		syntaxColoringBusy = YES;
-		[delegate textViewControllerWillStartSyntaxRecoloring: self];
+		if( [delegate respondsToSelector: @selector(textViewControllerWillStartSyntaxRecoloring:)] )
+			[delegate textViewControllerWillStartSyntaxRecoloring: self];
 		
 		// Kludge fix for case where we sometimes exceed text length:ra
 		int diff = [[TEXTVIEW textStorage] length] -(range.location +range.length);
@@ -878,7 +899,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	@finally
 	{
 		NSLog( @"@finally executed" );	// +++
-		[delegate textViewControllerDidFinishSyntaxRecoloring: self];
+		if( [delegate respondsToSelector: @selector(textViewControllerDidFinishSyntaxRecoloring:)] )
+			[delegate textViewControllerDidFinishSyntaxRecoloring: self];
 		syntaxColoringBusy = NO;
 	}
 }
@@ -930,7 +952,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	endChLine = (newSelectedCharRange.location -lastLineStart) +newSelectedCharRange.length;
 	
 	// Let delegate know what to display:
-	[delegate selectionInTextViewController: self
+	if( [delegate respondsToSelector: @selector(selectionInTextViewController:changedToStartCharacter:endCharacter:inLine:startCharacterInDocument:endCharacterInDocument:)] )
+		[delegate selectionInTextViewController: self
 			changedToStartCharacter: startChLine endCharacter: endChLine
 			inLine: lineNo startCharacterInDocument: startCh
 			endCharacterInDocument: endCh];
@@ -987,13 +1010,14 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 							withColor: (NSColor*) col andMode:(NSString*)attr andEscapeChar: (NSString*)vStringEscapeCharacter
 {
 	NS_DURING
-		NSScanner*					vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*				vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
+		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
 													nil];
-		BOOL						vIsEndChar = NO;
-		unichar						vEscChar = '\\';
+		BOOL				vIsEndChar = NO;
+		unichar				vEscChar = '\\';
+		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		if( vStringEscapeCharacter )
 		{
@@ -1006,6 +1030,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			int		vStartOffs,
 					vEndOffs;
 			vIsEndChar = NO;
+			
+			if( vDelegateHandlesProgress )
+				[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
 			
 			// Look for start of string:
 			[vScanner scanUpToString: startCh intoString: nil];
@@ -1021,7 +1048,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 				if( ![vScanner scanString:endCh intoString:nil] )	// But skip this char before that.
 					return;
 				
-				[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
+				if( vDelegateHandlesProgress )
+					[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
 			}
 			
 			vEndOffs = [vScanner scanLocation];
@@ -1048,11 +1076,12 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
 	@try
 	{
-		NSScanner*					vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*				vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
+		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
 													nil];
+		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		while( ![vScanner isAtEnd] )
 		{
@@ -1073,8 +1102,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			
 			// Now mess with the string's styles:
 			[s setAttributes: vStyles range: NSMakeRange( vStartOffs, vEndOffs -vStartOffs )];
-				
-			[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
+			
+			if( vDelegateHandlesProgress )
+				[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
 		}
 	}
 	@catch( ... )
@@ -1097,11 +1127,12 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
 	@try
 	{
-		NSScanner*					vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*				vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
+		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
 													nil];
+		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		while( ![vScanner isAtEnd] )
 		{
@@ -1122,8 +1153,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			
 			// Now mess with the string's styles:
 			[s setAttributes: vStyles range: NSMakeRange( vStartOffs, vEndOffs -vStartOffs )];
-				
-			[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
+			
+			if( vDelegateHandlesProgress )
+				[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
 		}
 	}
 	@catch( ... )
@@ -1146,12 +1178,13 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
 	@try
 	{
-		NSScanner*					vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*				vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
+		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
 													nil];
-		int							vStartOffs = 0;
+		int					vStartOffs = 0;
+		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		// Skip any leading whitespace chars, somehow NSScanner doesn't do that:
 		if( cset )
@@ -1191,7 +1224,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			// Now mess with the string's styles:
 			[s setAttributes: vStyles range: NSMakeRange( vStartOffs, [ident length] )];
 				
-			[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
+			if( vDelegateHandlesProgress )
+				[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
 		}
 	}
 	@catch( ... )
@@ -1214,11 +1248,12 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
 	@try
 	{
-		NSScanner*					vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*				vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
+		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
 													nil];
+		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		while( ![vScanner isAtEnd] )
 		{
@@ -1260,7 +1295,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			
 			vEndOffs = [vScanner scanLocation];
 			
-			[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
+			if( vDelegateHandlesProgress )
+				[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
 			
 			// Now mess with the string's styles:
 			[s setAttributes: vStyles range: NSMakeRange( vStartOffs, vEndOffs -vStartOffs )];
