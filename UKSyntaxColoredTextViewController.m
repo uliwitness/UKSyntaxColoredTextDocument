@@ -50,6 +50,18 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 @implementation UKSyntaxColoredTextViewController
 
++(void) makeSurePrefsAreInited
+{
+	if( !sSyntaxColoredTextDocPrefsInited )
+	{
+		NSUserDefaults*	prefs = [NSUserDefaults standardUserDefaults];
+		[prefs registerDefaults: [NSDictionary dictionaryWithContentsOfFile: [[NSBundle mainBundle] pathForResource: @"SyntaxColorDefaults" ofType: @"plist"]]];
+
+		sSyntaxColoredTextDocPrefsInited = YES;
+	}
+}
+
+
 /* -----------------------------------------------------------------------------
 	init:
 		Constructor that inits sourceCode member variable as a flag. It's
@@ -85,22 +97,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 }
 
 
-+(void) makeSurePrefsAreInited
-{
-	if( !sSyntaxColoredTextDocPrefsInited )
-	{
-		NSUserDefaults*	prefs = [NSUserDefaults standardUserDefaults];
-		[prefs registerDefaults: [NSDictionary dictionaryWithContentsOfFile: [[NSBundle mainBundle] pathForResource: @"SyntaxColorDefaults" ofType: @"plist"]]];
-
-		sSyntaxColoredTextDocPrefsInited = YES;
-	}
-}
-
-
 -(void)	setUpSyntaxColoring
 {
-	NSLog(@"setUpSyntaxColoring");	// +++
-	
 	// Set up some sensible defaults for syntax coloring:
 	[[self class] makeSurePrefsAreInited];
 	
@@ -115,35 +113,38 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	// Do initial syntax coloring of our file:
 	[self recolorCompleteFile: nil];
 	
+	// Put selection at top like Project Builder has it, so user sees it:
+	[TEXTVIEW setSelectedRange: NSMakeRange(0,0)];
+	
 	// Make sure we can use "find" if we're on 10.3:
 	if( [TEXTVIEW respondsToSelector: @selector(setUsesFindPanel:)] )
 		[TEXTVIEW setUsesFindPanel: YES];
+}
 
+
+-(void)		setDelegate: (id<UKSyntaxColoredTextViewDelegate>)inDelegate
+{
+	delegate = inDelegate;
+}
+
+
+-(id)	delegate
+{
+	return delegate;
 }
 
 
 /* -----------------------------------------------------------------------------
-	awakeFromNib:
-		We didn't create our own view? Set up things!
+	setView:
+		We've just been given a view! Apply initial syntax coloring.
    -------------------------------------------------------------------------- */
 
--(void)	awakeFromNib
+-(void)	setView: (NSView*)theView
 {
-	if( [self view] )
-		[self setUpSyntaxColoring];
-}
-
-
-/* -----------------------------------------------------------------------------
-	loadView:
-		NIB has been loaded, fill the text view with our text and apply
-		initial syntax coloring.
-   -------------------------------------------------------------------------- */
-
--(void)	loadView
-{
-    [super loadView];
-	[self setUpSyntaxColoring];
+    [super setView: theView];
+	
+	[(NSTextView*)theView setDelegate: self];
+	[self setUpSyntaxColoring];	// +++ If someone calls this twice, we should only call part of this twice!
 }
 
 
@@ -827,7 +828,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		
 		if( vComponentsEnny == nil )	// No new-style list of components to colorize?
 		{
-			// @finally should take care of cleaning up syntaxColoringBusy etc. here.
+			// @finally takes care of cleaning up syntaxColoringBusy etc. here.
 			return;
 		}
 		
@@ -900,10 +901,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	}
 	@finally
 	{
-		NSLog( @"@finally executed" );	// +++
 		if( [delegate respondsToSelector: @selector(textViewControllerDidFinishSyntaxRecoloring:)] )
 			[delegate textViewControllerDidFinishSyntaxRecoloring: self];
 		syntaxColoringBusy = NO;
+		[self textView: TEXTVIEW willChangeSelectionFromCharacterRange: [TEXTVIEW selectedRange]
+					toCharacterRange: [TEXTVIEW selectedRange]];
 	}
 }
 
@@ -917,9 +919,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(NSRange)  textView: (NSTextView*)theTextView willChangeSelectionFromCharacterRange: (NSRange)oldSelectedCharRange
 					toCharacterRange: (NSRange)newSelectedCharRange
 {
-	unsigned		startCh = newSelectedCharRange.location +1,
+	unsigned		startCh = newSelectedCharRange.location,
 					endCh = newSelectedCharRange.location +newSelectedCharRange.length;
-	unsigned		lineNo = 1,
+	unsigned		lineNo = 0,
 					lastLineStart = 0,
 					x = 0;
 	unsigned		startChLine = 0, endChLine = 0;
@@ -950,7 +952,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		}
 	}
 	
-	startChLine = (newSelectedCharRange.location -lastLineStart) +1;
+	startChLine = (newSelectedCharRange.location -lastLineStart);
 	endChLine = (newSelectedCharRange.location -lastLineStart) +newSelectedCharRange.length;
 	
 	// Let delegate know what to display:
@@ -977,7 +979,14 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 -(NSString*)	syntaxDefinitionFilename
 {
-	return @"SyntaxDefinition";
+	NSString*	syntaxDefFN = nil;
+	if( [delegate respondsToSelector: @selector(syntaxDefinitionFilenameForTextViewController:)] )
+		syntaxDefFN = [delegate syntaxDefinitionFilenameForTextViewController: self];
+	
+	if( !syntaxDefFN )
+		syntaxDefFN = @"SyntaxDefinition";
+	
+	return syntaxDefFN;
 }
 
 
@@ -994,10 +1003,20 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 -(NSDictionary*)	syntaxDefinitionDictionary
 {
-	NSBundle*	theBundle = [self nibBundle];
-	if( !theBundle )
-		theBundle = [NSBundle bundleForClass: [self class]];	// Usually the main bundle, but be nice to plugins.
-	return [NSDictionary dictionaryWithContentsOfFile: [theBundle pathForResource: [self syntaxDefinitionFilename] ofType: @"plist"]];
+	NSDictionary*	theDict = nil;
+	
+	if( [delegate respondsToSelector: @selector(syntaxDefinitionDictionaryForTextViewController:)] )
+		theDict = [delegate syntaxDefinitionDictionaryForTextViewController: self];
+	
+	if( !theDict )
+	{
+		NSBundle*	theBundle = [self nibBundle];
+		if( !theBundle )
+			theBundle = [NSBundle bundleForClass: [self class]];	// Usually the main bundle, but be nice to plugins.
+		theDict = [NSDictionary dictionaryWithContentsOfFile: [theBundle pathForResource: [self syntaxDefinitionFilename] ofType: @"plist"]];
+	}
+	
+	return theDict;
 }
 
 

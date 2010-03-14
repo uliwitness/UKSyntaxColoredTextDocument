@@ -44,6 +44,7 @@
 
 @protocol UKSyntaxColoredTextViewDelegate <NSObject>
 
+@optional
 -(void)	textViewControllerWillStartSyntaxRecoloring: (UKSyntaxColoredTextViewController*)sender;		// Show your progress indicator.
 -(void)	textViewControllerProgressedWhileSyntaxRecoloring: (UKSyntaxColoredTextViewController*)sender;	// Make sure it gets redrawn.
 -(void)	textViewControllerDidFinishSyntaxRecoloring: (UKSyntaxColoredTextViewController*)sender;		// Hide your progress indicator.
@@ -52,6 +53,9 @@
 			changedToStartCharacter: (NSUInteger)startCharInLine endCharacter: (NSUInteger)endCharInLine
 			inLine: (NSUInteger)lineInDoc startCharacterInDocument: (NSUInteger)startCharInDoc
 			endCharacterInDocument: (NSUInteger)endCharInDoc;
+
+-(NSString*)		syntaxDefinitionFilenameForTextViewController: (UKSyntaxColoredTextViewController*)sender;
+-(NSDictionary*)	syntaxDefinitionDictionaryForTextViewController: (UKSyntaxColoredTextViewController*)sender;
 
 @end
 
@@ -73,6 +77,9 @@
 }
 
 +(void) 	makeSurePrefsAreInited;		// No need to call this.
+
+-(void)		setDelegate: (id<UKSyntaxColoredTextViewDelegate>)delegate;
+-(id)		delegate;
 
 -(IBAction)	recolorCompleteFile: (id)sender;
 -(IBAction)	toggleAutoSyntaxColoring: (id)sender;
