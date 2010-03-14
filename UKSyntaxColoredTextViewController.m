@@ -436,6 +436,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		Makes the view so wide that text won't wrap anymore.
    -------------------------------------------------------------------------- */
 
+#define REALLY_LARGE_NUMBER	1.0e7	// FLT_MAX is too large and causes our rect to be shortened again.
+
 -(void) turnOffWrapping
 {
 	NSTextContainer*	textContainer = [TEXTVIEW textContainer];
@@ -446,7 +448,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
     [scrollView setHasHorizontalScroller: YES];
 	
 	// Make text container so wide it won't wrap:
-	[textContainer setContainerSize: NSMakeSize(FLT_MAX, FLT_MAX)];
+	[textContainer setContainerSize: NSMakeSize(REALLY_LARGE_NUMBER, REALLY_LARGE_NUMBER)];
 	[textContainer setWidthTracksTextView: NO];
     [textContainer setHeightTracksTextView: NO];
 
@@ -454,7 +456,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	frame.origin = NSMakePoint( 0.0, 0.0 );
     frame.size = [scrollView contentSize];
 	
-    [TEXTVIEW setMaxSize: NSMakeSize(FLT_MAX, FLT_MAX)];
+    [TEXTVIEW setMaxSize: NSMakeSize(REALLY_LARGE_NUMBER, REALLY_LARGE_NUMBER)];
     [TEXTVIEW setHorizontallyResizable: YES];
     [TEXTVIEW setVerticallyResizable: YES];
     [TEXTVIEW setAutoresizingMask: NSViewNotSizable];
