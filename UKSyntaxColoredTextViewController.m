@@ -116,6 +116,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	// Put selection at top like Project Builder has it, so user sees it:
 	[TEXTVIEW setSelectedRange: NSMakeRange(0,0)];
 	
+	[self textView: TEXTVIEW willChangeSelectionFromCharacterRange: NSMakeRange(0,0)
+					toCharacterRange: NSMakeRange(0,0)];
+	
 	// Make sure we can use "find" if we're on 10.3:
 	if( [TEXTVIEW respondsToSelector: @selector(setUsesFindPanel:)] )
 		[TEXTVIEW setUsesFindPanel: YES];

@@ -65,7 +65,7 @@
 //	Class:
 // -----------------------------------------------------------------------------
 
-@interface UKSyntaxColoredTextViewController : NSViewController
+@interface UKSyntaxColoredTextViewController : NSViewController <NSTextViewDelegate>
 {
 	BOOL								autoSyntaxColoring;		// Automatically refresh syntax coloring when text is changed?
 	BOOL								maintainIndentation;	// Keep new lines indented at same depth as their predecessor?

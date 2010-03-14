@@ -66,10 +66,11 @@
     [super windowControllerDidLoadNib: aController];
 	
 	NSAssert( syntaxColoringController == nil, @"windowControllerDidLoadNib possibly called twice." );
+	
 	syntaxColoringController = [[UKSyntaxColoredTextViewController alloc] init];
 	[syntaxColoringController setDelegate: self];
 	[syntaxColoringController setView: textView];
-	
+		
 	// Load source code into text view, if necessary:
 	if( sourceCode != nil )
 	{
@@ -82,8 +83,6 @@
 	//[progress setStyle: NSProgressIndicatorSpinningStyle];	// NIB forgets that :-(
 	[progress setDisplayedWhenStopped: NO];
 	[progress setUsesThreadedAnimation: YES];
-	
-	[status setStringValue: NSLocalizedString(@"",@"Initial status string in syntax colored text documents.")];
 }
 
 
