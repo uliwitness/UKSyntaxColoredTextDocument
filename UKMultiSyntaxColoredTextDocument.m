@@ -244,7 +244,7 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 //		2004-05-18	witness	Created.
 // -----------------------------------------------------------------------------
 
--(void) windowControllerDidLoadNib:(NSWindowController *)windowController
+-(void) windowControllerDidLoadNib: (NSWindowController *)windowController
 {
 	if( syntaxDefinitionMenu )  // Connected to a popup in our NIB?
 		[self rebuildSyntaxMenu];
@@ -259,31 +259,23 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 
 
 // -----------------------------------------------------------------------------
-//	syntaxDefinitionDictionary:
+//	syntaxDefinitionDictionaryForTextViewController:
 //		Return the syntax definition dictionary to use for colorizing. This
-//		overrides a method in UKSyntaxColoredTextDocument since UKSCTD only
-//		looks for its files in the application bundle.
-//
-//	REVISIONS:
-//		2004-05-18	witness	Documented.
-//		2004-05-17	witness	Created.
+//		implements a delegate method in UKSyntaxColoredTextViewController since
+//		that only looks for its files in the application bundle.
 // -----------------------------------------------------------------------------
 
--(NSDictionary*)	syntaxDefinitionDictionary
+-(NSDictionary*)	syntaxDefinitionDictionaryForTextViewController: (UKSyntaxColoredTextViewController*)sender
 {
-	NSString*   synDefName = [self syntaxDefinitionFilename];
+	NSString*   synDefName = [self syntaxDefinitionFilename];	// *not* syntaxDefinitionFilenameForTextViewController:.
 	return [NSDictionary dictionaryWithContentsOfFile: synDefName];
 }
 
 
 // -----------------------------------------------------------------------------
-//	syntaxDefinitionFilename:
+//	syntaxDefinitionFilenameForTextViewController:
 //		Return the full pathname of the syntax definition file to use for
 //		syntax coloring.
-//
-//	REVISIONS:
-//		2004-05-18	witness	Documented.
-//		2004-05-17	witness	Created.
 // -----------------------------------------------------------------------------
 
 -(NSString*)	syntaxDefinitionFilename
