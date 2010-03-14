@@ -96,11 +96,11 @@
 -(IBAction) createNewIdentifier: (id)sender
 {
 	[[self identifiers] addObject: NSLocalizedString(@"untitled", nil)];
-	int		theRow = [[self identifiers] count] -1;
+	NSUInteger		theRow = [[self identifiers] count] -1;
 
 	[identifiersList noteNumberOfRowsChanged];
 	
-	[identifiersList selectRow: theRow byExtendingSelection: NO];
+	[identifiersList selectRowIndexes: [NSIndexSet indexSetWithIndex: theRow] byExtendingSelection: NO];
 	[identifiersList editColumn: 0 row: theRow withEvent: nil select: YES];
 }
 
