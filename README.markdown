@@ -1,33 +1,22 @@
-UKSYNTAXCOLOREDTEXTDOCUMENT 0.4
+#UKSyntaxColoredTextDocument
 
-This is a document class that implements a text editor that performs "live"
-syntax coloring on its documents, and generally tries to be helpful to editing
-structured text documents for programming.
+This is a view controller class that implements a text editor that performs "live" syntax coloring in an NSTextView, and generally tries to be helpful to editing structured text documents for programming.
 
 
-FEATURES?
+##Features
 
--> Live syntax coloring as you type, fast through localized updates
--> Most information about the things to colorize is kept in a
-   SyntaxDefinitions.plist file that can easily be adapted to other programming
-   languages than the included Objective C and HTML.
--> All colors used have aesthetically pleasing defaults and are read from the
-   user defaults database. That means no more pink, turquoise and brown unless
-   you want these colors. And the defaults are initially fetched from the syntax
-   definitions, which you can adjust for your apps.
--> Built-in support for "Go To Line" and "Go To Character" to select parts of
-   the text, also useful for highlighting lines when reporting coding errors.
--> Controller classes for editing preferences included.
--> Maintains indentation (if desired).
+* Live syntax coloring as you type, fast through localized updates
+* Most information about the things to colorize is kept in a SyntaxDefinitions.plist file that can easily be adapted to other programming languages than the included Objective C and HTML.
+* All colors used have aesthetically pleasing defaults and are read from the user defaults database. That means no more pink, turquoise and brown unless you want these colors. And the defaults are initially fetched from the syntax definitions, which you can adjust for your apps.
+* NSDocument subclass for the most common case, editing text files.
+* Built-in support for "Go To Line" and "Go To Character" to select parts of the text, also useful for highlighting lines when reporting coding errors.
+* Controller classes for editing preferences included.
+* Maintains indentation (if desired).
 
 
-ADAPTING TO OTHER PROGRAMMING LANGUAGES
+##Adapting to Other Programming Languages
 
-To adapt the syntax coloring to another language, change the
-SyntaxDefinition.plist file using Apple's Property List Editor. A syntax
-definition file is an NSDictionary saved as a property list (and can thus be
-edited using Apple's Property List Editor). It currently contains two required
-entries.
+To adapt the syntax coloring to another language, change the SyntaxDefinition.plist file using Apple's Property List Editor. A syntax definition file is an NSDictionary saved as a property list (and can thus be edited using Apple's Property List Editor). It currently contains two required entries.
 
 The first has the key "Components", which is an array of dictionaries each
 describing one "thing" that can be colorized. Here's what the various keys mean:
@@ -99,7 +88,7 @@ OneLineCommentPrefix	-	A string that will be used by the action method
 							whitespace is syntactically relevant.
 
 
-WHAT LICENSE IS THIS UNDER?
+##License
 
 Copyright (c) 2003-2010 Uli Kusterer.
 
@@ -123,30 +112,17 @@ freely, subject to the following restrictions:
    distribution.
 
 
-REVISIONS:
+##Revisions
 	0.1	-	First public release.
-	0.1.1 - Fixed a tiny bug that could cause a crash when the last character in
-			the document was deleted. Removed a couple of outdated files and
-			added some missing identifiers to the example SyntaxDefinition.plist.
-	0.1.5 - Added option to maintain indentation of previous line for new lines
-			when a return key is typed, added accessors for auto syntax coloring
-			and maintain indentation flags.
-	0.2.0 - Added "Identifiers2" list, "comments2", coloring of "tags",
-			-syntaxDictionary method, support for specifying the escape
-			character for coloring strings, HTML sample syntax definition,
-			leaving out the charset for identifiers, icons indicating selection
-			type, UKSCTDColorWellPrefsController, new-style syntax definitions
-			and UKSCTDUserIdentifiersPrefsController, and UKMultiSyntaxColoredTextDocument.
-	0.3.0 - Fixed exceptions when undoing, hopefully finally fixed the bug where
-			editing an empty document would occasionally crash.
-	0.4.0 - Fixed indent/unindent to not indent the next line after a full-line
-			(triple click) selection and made it support undo. Made "new" ObjC
-			coloring scheme support user identifiers, added more identifiers.
-			Multi syntax colored document now tries to pick the right syntax
-			coloring definition file based on extension. Misc. stability fixes.
+	0.1.1 - Fixed a tiny bug that could cause a crash when the last character in the document was deleted. Removed a couple of outdated files and added some missing identifiers to the example SyntaxDefinition.plist.
+	0.1.5 - Added option to maintain indentation of previous line for new lines when a return key is typed, added accessors for auto syntax coloring and maintain indentation flags.
+	0.2.0 - Added "Identifiers2" list, "comments2", coloring of "tags", -syntaxDictionary method, support for specifying the escape character for coloring strings, HTML sample syntax definition, leaving out the charset for identifiers, icons indicating selection type, UKSCTDColorWellPrefsController, new-style syntax definitions and UKSCTDUserIdentifiersPrefsController, and UKMultiSyntaxColoredTextDocument.
+	0.3.0 - Fixed exceptions when undoing, hopefully finally fixed the bug where editing an empty document would occasionally crash.
+	0.4.0 - Fixed indent/unindent to not indent the next line after a full-line (triple click) selection and made it support undo. Made "new" ObjC coloring scheme support user identifiers, added more identifiers. Multi syntax colored document now tries to pick the right syntax coloring definition file based on extension. Misc. stability fixes.
+	0.5.0 - Various improvements to undo, comment/uncomment menu item, actual syntax coloring code now extracted into a view controller. Removed support for old-style syntax definitions. Prettier top bar containing status messages.
 
 
-CONTACT INFORMATION
+##Contact Information
 
 You can find the newest version of UKSyntaxColoredTextDocument at
 	http://github.com/uliwitness/UKSyntaxColoredTextDocument
