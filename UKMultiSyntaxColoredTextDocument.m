@@ -249,7 +249,7 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 	if( syntaxDefinitionMenu )  // Connected to a popup in our NIB?
 		[self rebuildSyntaxMenu];
 	
-	NSString*		fileSuffix = [[self fileName] pathExtension];
+	NSString*		fileSuffix = [[self fileURL] pathExtension];
 	NSNumber*		numObj = [sUKMSCTDSuffixToTagMappings objectForKey: fileSuffix];
 	if( numObj )
 		[self setSyntaxDefinitionFilename: [sUKMSCTDSyntaxDefinitionFiles objectAtIndex: [numObj intValue]]];
