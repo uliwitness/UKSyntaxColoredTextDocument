@@ -110,6 +110,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	// Make sure text isn't wrapped:
 	[self turnOffWrapping];
 	
+	[TEXTVIEW setContinuousSpellCheckingEnabled: NO];
+	[TEXTVIEW setGrammarCheckingEnabled: NO];
+	
 	// Do initial syntax coloring of our file:
 	[self recolorCompleteFile: nil];
 	
@@ -527,11 +530,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	[[self undoManager] beginUndoGrouping];
 	NSRange				selRange = [TEXTVIEW selectedRange];
 	NSString*			prevText = [[[TEXTVIEW textStorage] string] substringWithRange: selRange];
-	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:)
-							object: [NSDictionary dictionaryWithObjectsAndKeys:
-										prevText, @"UKSCTDTextToRestore",
-										NSStringFromRange( selRange ), @"UKSCTDRangeToRestore",
-									nil]];
 	
 	NSRange				nuSelRange = selRange;
 	unsigned			x;
@@ -558,6 +556,12 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	[str insertString: @"\t" atIndex: nuSelRange.location];
 	nuSelRange.length++;
 	[TEXTVIEW setSelectedRange: nuSelRange];
+
+	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:)
+							object: [NSDictionary dictionaryWithObjectsAndKeys:
+										prevText, @"UKSCTDTextToRestore",
+										NSStringFromRange( nuSelRange ), @"UKSCTDRangeToRestore",
+									nil]];
 	[[self undoManager] endUndoGrouping];
 }
 
@@ -586,11 +590,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	
 	[[self undoManager] beginUndoGrouping];
 	NSString*			prevText = [[[TEXTVIEW textStorage] string] substringWithRange: selRange];
-	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:)
-							object: [NSDictionary dictionaryWithObjectsAndKeys:
-										prevText, @"UKSCTDTextToRestore",
-										NSStringFromRange( selRange ), @"UKSCTDRangeToRestore",
-									nil]];
 		
 	for( x = lastIndex; x >= selRange.location; x-- )
 	{
@@ -638,6 +637,12 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	}
 	
 	[TEXTVIEW setSelectedRange: nuSelRange];
+
+	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:)
+							object: [NSDictionary dictionaryWithObjectsAndKeys:
+										prevText, @"UKSCTDTextToRestore",
+										NSStringFromRange( nuSelRange ), @"UKSCTDRangeToRestore",
+									nil]];
 	[[self undoManager] endUndoGrouping];
 }
 
@@ -694,11 +699,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	
 	[[self undoManager] beginUndoGrouping];
 	NSString*			prevText = [[[TEXTVIEW textStorage] string] substringWithRange: selRange];
-	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:)
-							object: [NSDictionary dictionaryWithObjectsAndKeys:
-										prevText, @"UKSCTDTextToRestore",
-										NSStringFromRange( selRange ), @"UKSCTDRangeToRestore",
-									nil]];
 	
 	// Unselect any trailing returns so we don't comment the next line after a full-line selection.
 	while( [str characterAtIndex: selRange.location +selRange.length -1] == '\n' ||
@@ -755,8 +755,12 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	}
 	
 	[TEXTVIEW setSelectedRange: nuSelRange];
+	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:)
+							object: [NSDictionary dictionaryWithObjectsAndKeys:
+										prevText, @"UKSCTDTextToRestore",
+										NSStringFromRange( nuSelRange ), @"UKSCTDRangeToRestore",
+									nil]];
 	[[self undoManager] endUndoGrouping];
-	
 }
 
 
