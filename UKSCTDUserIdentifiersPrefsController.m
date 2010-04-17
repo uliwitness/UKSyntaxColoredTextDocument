@@ -31,6 +31,7 @@
 
 #import "UKSCTDUserIdentifiersPrefsController.h"
 #import "UKSyntaxColoredTextViewController.h"
+#import "UKHelperMacros.h"
 
 
 @implementation UKSCTDUserIdentifiersPrefsController
@@ -63,8 +64,7 @@
 
 -(void) dealloc
 {
-    [identifiers release];
-    identifiers = nil;
+    DESTROY(identifiers);
 
     [super dealloc];
 }

@@ -32,6 +32,7 @@
 #import "UKSyntaxColoredTextViewController.h"
 #import "NSArray+Color.h"
 #import "NSScanner+SkipUpToCharset.h"
+#import "UKHelperMacros.h"
 
 
 // -----------------------------------------------------------------------------
@@ -87,11 +88,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
 	[recolorTimer invalidate];
-	[recolorTimer release];
-	recolorTimer = nil;
+	DESTROY(recolorTimer);
 	
-	[replacementString release];
-	replacementString = nil;
+	DESTROY(replacementString);
 	
 	[super dealloc];
 }
@@ -251,12 +250,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	if( maintainIndentation )
 	{
 		affectedCharRange = afcr;
-		if( replacementString )
-		{
-			[replacementString release];
-			replacementString = nil;
-		}
-		replacementString = [rps retain];
+		ASSIGN(replacementString,rps);
 		
 		[self performSelector: @selector(didChangeText) withObject: nil afterDelay: 0.0];	// Queue this up on the event loop. If we change the text here, we only confuse the undo stack.
 	}
