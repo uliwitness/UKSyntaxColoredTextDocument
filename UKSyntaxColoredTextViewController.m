@@ -147,7 +147,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
     [super setView: theView];
 	
 	[(NSTextView*)theView setDelegate: self];
-	[self setUpSyntaxColoring];	// +++ If someone calls this twice, we should only call part of this twice!
+	[self setUpSyntaxColoring];	// TODO: If someone calls this twice, we should only call part of this twice!
 }
 
 
