@@ -3,6 +3,11 @@
 This is a view controller class that implements a text editor that performs "live" syntax coloring in an NSTextView, and generally tries to be helpful to editing structured text documents for programming.
 
 
+##Requirements
+
+You *must* check out UliKit into a folder next to this one, or you will get missing files.
+
+
 ##Features
 
 * Live syntax coloring as you type, fast through localized updates
