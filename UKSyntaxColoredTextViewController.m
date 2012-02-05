@@ -82,7 +82,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	{
 		autoSyntaxColoring = YES;
 		maintainIndentation = YES;
-		recolorTimer = nil;
 		syntaxColoringBusy = NO;
 	}
     return self;
@@ -92,9 +91,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(void)	dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	
-	[recolorTimer invalidate];	// It retains us, so we should already be invalidated when we get here, but just for symmetry's sake.
-	DESTROY_DEALLOC(recolorTimer);
 	
 	DESTROY_DEALLOC(replacementString);
 	
@@ -809,8 +805,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	if( syntaxColoringBusy )	// Prevent endless loop when recoloring's replacement of text causes processEditing to fire again.
 		return;
 	
-	if( TEXTVIEW == nil || range.length == 0	// Don't like doing useless stuff.
-		|| recolorTimer )						// And don't like recoloring partially if a full recolorization is pending.
+	if( TEXTVIEW == nil || range.length == 0 )	// Don't like doing useless stuff.
 		return;
 	
 	@try

@@ -71,7 +71,7 @@
 {
 	BOOL								autoSyntaxColoring;		// Automatically refresh syntax coloring when text is changed?
 	BOOL								maintainIndentation;	// Keep new lines indented at same depth as their predecessor?
-	NSTimer*							recolorTimer;			// Timer used to do the actual recoloring a little while after the last keypress.
+	id									reserved;
 	BOOL								syntaxColoringBusy;		// Set while recolorRange is busy, so we don't recursively call recolorRange.
 	NSRange								affectedCharRange;
 	NSString*							replacementString;
