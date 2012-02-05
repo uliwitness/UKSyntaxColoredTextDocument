@@ -32,6 +32,7 @@
 #import "UKSyntaxColoredTextViewController.h"
 #import "NSArray+Color.h"
 #import "NSScanner+SkipUpToCharset.h"
+#import "UKHelperMacros.h"
 
 
 // -----------------------------------------------------------------------------
@@ -87,11 +88,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
 	[recolorTimer invalidate];
-	[recolorTimer release];
-	recolorTimer = nil;
+	DESTROY_DEALLOC(recolorTimer);
 	
-	[replacementString release];
-	replacementString = nil;
+	DESTROY_DEALLOC(replacementString);
 	
 	[super dealloc];
 }

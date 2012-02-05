@@ -28,6 +28,7 @@
 		3DFECEC706558AD20059B4E8 /* InsertionMark.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 3DFECEC506558AD20059B4E8 /* InsertionMark.tiff */; };
 		3DFECED2065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3DFECED0065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h */; };
 		3DFECED3065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3DFECED1065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m */; };
+		550765DE14CAC220008CFDF2 /* UKHelperMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 550765DD14CAC220008CFDF2 /* UKHelperMacros.h */; };
 		55255A4B114C077D00279B03 /* UKSyntaxColoredTextViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 55255A49114C077D00279B03 /* UKSyntaxColoredTextViewController.h */; };
 		55255A4C114C077D00279B03 /* UKSyntaxColoredTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 55255A4A114C077D00279B03 /* UKSyntaxColoredTextViewController.m */; };
 		55D9D77C112DDF18001ADF29 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 55D9D77A112DDF18001ADF29 /* MainMenu.xib */; };
@@ -72,6 +73,7 @@
 		3DFECEC506558AD20059B4E8 /* InsertionMark.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = InsertionMark.tiff; sourceTree = "<group>"; };
 		3DFECED0065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKSCTDUserIdentifiersPrefsController.h; sourceTree = "<group>"; };
 		3DFECED1065592BE0059B4E8 /* UKSCTDUserIdentifiersPrefsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKSCTDUserIdentifiersPrefsController.m; sourceTree = "<group>"; };
+		550765DD14CAC220008CFDF2 /* UKHelperMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UKHelperMacros.h; path = ../UliKit/UKHelperMacros.h; sourceTree = "<group>"; };
 		55255A49114C077D00279B03 /* UKSyntaxColoredTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKSyntaxColoredTextViewController.h; sourceTree = "<group>"; };
 		55255A4A114C077D00279B03 /* UKSyntaxColoredTextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKSyntaxColoredTextViewController.m; sourceTree = "<group>"; };
 		55D9D77B112DDF18001ADF29 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				32DBCF750370BD2300C91783 /* UKSyntaxColoredDocument_Prefix.pch */,
+				550765DD14CAC220008CFDF2 /* UKHelperMacros.h */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 			);
 			name = "Other Sources";
@@ -230,6 +233,7 @@
 				3D5D9F3C08873A4B00058C2B /* NSArray+Color.h in Headers */,
 				55F40EF71143C4E500B2BC40 /* UKSCTDGradientBar.h in Headers */,
 				55255A4B114C077D00279B03 /* UKSyntaxColoredTextViewController.h in Headers */,
+				550765DE14CAC220008CFDF2 /* UKHelperMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,7 +266,11 @@
 			isa = PBXProject;
 			buildConfigurationList = 3D5D9F3208873A1700058C2B /* Build configuration list for PBXProject "UKSyntaxColoredDocument" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				en,
+			);
 			mainGroup = 2A37F4AAFDCFA73011CA2CEA /* UKSyntaxColoredDocument */;
 			projectDirPath = "";
 			projectRoot = "";
