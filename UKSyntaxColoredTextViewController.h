@@ -54,8 +54,9 @@
 			inLine: (NSUInteger)lineInDoc startCharacterInDocument: (NSUInteger)startCharInDoc
 			endCharacterInDocument: (NSUInteger)endCharInDoc;
 
--(NSString*)		syntaxDefinitionFilenameForTextViewController: (UKSyntaxColoredTextViewController*)sender;
+-(NSString*)		syntaxDefinitionFilenameForTextViewController: (UKSyntaxColoredTextViewController*)sender;	// Won't get called if you override syntaxDefinitionDictionaryForTextViewController:.
 -(NSDictionary*)	syntaxDefinitionDictionaryForTextViewController: (UKSyntaxColoredTextViewController*)sender;
+-(NSArray*)			userIdentifiersForKeywordComponentName: (NSString*)inModeName;	// If you can parse your code & provide a list of identifiers the user uses, you can provide this method to tell the editor about them.
 
 @end
 
@@ -100,9 +101,10 @@
 
 // Override any of the following in one of your subclasses to customize this object further:
 -(NSString*)		syntaxDefinitionFilename;   // Defaults to "SyntaxDefinition.plist" in the app bundle's "Resources" directory.
--(NSDictionary*)	syntaxDefinitionDictionary; // Defaults to loading from -syntaxDefinitionFilename.
+-(NSDictionary*)	syntaxDefinitionDictionary; // Defaults to loading plist from -syntaxDefinitionFilename.
 
 -(NSDictionary*)	defaultTextAttributes;		// Style attributes dictionary for an NSAttributedString.
+-(NSRange)			defaultSelectedRange;		// Selected text range when document is opened.
 
 // Private:
 -(void) turnOffWrapping;
