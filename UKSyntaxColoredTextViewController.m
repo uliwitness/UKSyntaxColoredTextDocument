@@ -818,9 +818,10 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			range.length += diff;
 				
 		// Get the text we'll be working with:
-		NSMutableAttributedString*	vString = [[NSMutableAttributedString alloc] initWithString: [[[TEXTVIEW textStorage] string] substringWithRange: range]];
+		NSDictionary*				vStyles = [self defaultTextAttributes];
+		NSMutableAttributedString*	vString = [[NSMutableAttributedString alloc] initWithString: [[[TEXTVIEW textStorage] string] substringWithRange: range] attributes: vStyles];
 		[vString autorelease];
-		
+				
 		// Load colors and fonts to use from preferences:
 		// Load our dictionary which contains info on coloring this language:
 		NSDictionary*				vSyntaxDefinition = [self syntaxDefinitionDictionary];
@@ -834,7 +835,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		
 		// Loop over all available components:
 		NSDictionary*				vCurrComponent = nil;
-		NSDictionary*				vStyles = [self defaultTextAttributes];
 		NSUserDefaults*				vPrefs = [NSUserDefaults standardUserDefaults];
 
 		while( (vCurrComponent = [vComponentsEnny nextObject]) )
@@ -896,8 +896,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		}
 		
 		// Replace the range with our recolored part:
-		[vString addAttributes: vStyles range: NSMakeRange( 0, [vString length] )];
 		[[TEXTVIEW textStorage] replaceCharactersInRange: range withAttributedString: vString];
+		[[TEXTVIEW textStorage] fixFontAttributeInRange: range];	// Make sure Japanese etc. fallback fonts get applied.
 	}
 	@finally
 	{
@@ -1032,10 +1032,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
 	NS_DURING
 		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSMutableDictionary*vStyles = [[[self defaultTextAttributes] mutableCopy] autorelease];
+		[vStyles addEntriesFromDictionary: [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
-													nil];
+													nil]];
 		BOOL				vIsEndChar = NO;
 		unichar				vEscChar = '\\';
 		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
@@ -1098,10 +1099,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	@try
 	{
 		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSMutableDictionary*vStyles = [[[self defaultTextAttributes] mutableCopy] autorelease];
+		[vStyles addEntriesFromDictionary: [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
-													nil];
+													nil]];
 		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		while( ![vScanner isAtEnd] )
@@ -1149,10 +1151,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	@try
 	{
 		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSMutableDictionary*vStyles = [[[self defaultTextAttributes] mutableCopy] autorelease];
+		[vStyles addEntriesFromDictionary: [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
-													nil];
+													nil]];
 		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		while( ![vScanner isAtEnd] )
@@ -1200,10 +1203,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	@try
 	{
 		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSMutableDictionary*vStyles = [[[self defaultTextAttributes] mutableCopy] autorelease];
+		[vStyles addEntriesFromDictionary: [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
-													nil];
+													nil]];
 		int					vStartOffs = 0;
 		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
@@ -1270,10 +1274,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	@try
 	{
 		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*		vStyles = [NSDictionary dictionaryWithObjectsAndKeys:
+		NSMutableDictionary*vStyles = [[[self defaultTextAttributes] mutableCopy] autorelease];
+		[vStyles addEntriesFromDictionary: [NSDictionary dictionaryWithObjectsAndKeys:
 													col, NSForegroundColorAttributeName,
 													attr, TD_SYNTAX_COLORING_MODE_ATTR,
-													nil];
+													nil]];
 		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		while( ![vScanner isAtEnd] )
@@ -1298,7 +1303,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			while( ![vScanner isAtEnd] )
 			{
 				// Scan up to the next occurence of the terminating sequence:
-				(BOOL) [vScanner scanUpToString: endCh intoString:nil];
+				[vScanner scanUpToString: endCh intoString:nil];
 				
 				// Now, if the mode of the end marker is not the mode we were told to ignore,
 				//  we're finished now and we can exit the inner loop:
@@ -1340,7 +1345,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 -(NSDictionary*)	defaultTextAttributes
 {
-	return [NSDictionary dictionaryWithObject: [NSFont userFixedPitchFontOfSize: 10.0] forKey: NSFontAttributeName];
+	return [NSDictionary dictionaryWithObjectsAndKeys: [NSFont userFixedPitchFontOfSize: 10.0], NSFontAttributeName, nil];
 }
 
 @end
