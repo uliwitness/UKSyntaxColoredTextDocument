@@ -795,8 +795,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		The range passed in here is special, and may not include partial
 		identifiers or the end of a comment. Make sure you include the entire
 		multi-line comment etc. or it'll lose color.
-		
-		This calls oldRecolorRange to handle old-style syntax definitions.
    -------------------------------------------------------------------------- */
 
 -(void)		recolorRange: (NSRange)range
@@ -828,7 +826,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		NSDictionary*				vSyntaxDefinition = [self syntaxDefinitionDictionary];
 		NSEnumerator*				vComponentsEnny = [[vSyntaxDefinition objectForKey: @"Components"] objectEnumerator];
 		
-		if( vComponentsEnny == nil )	// No new-style list of components to colorize?
+		if( vComponentsEnny == nil )	// No list of components to colorize?
 		{
 			// @finally takes care of cleaning up syntaxColoringBusy etc. here.
 			return;
