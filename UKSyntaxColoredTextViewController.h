@@ -37,7 +37,7 @@
 // -----------------------------------------------------------------------------
 
 #define TD_USER_DEFINED_IDENTIFIERS			@"SyntaxColoring:UserIdentifiers"		// Key in user defaults holding user-defined identifiers to colorize.
-#define TD_SYNTAX_COLORING_MODE_ATTR		@"UKTextDocumentSyntaxColoringMode"		// Anything we colorize gets this attribute.
+#define TD_SYNTAX_COLORING_MODE_ATTR		@"UKTextDocumentSyntaxColoringMode"		// Anything we colorize gets this attribute. The value is an NSString holding the component name.
 
 
 @class UKSyntaxColoredTextViewController;
@@ -57,6 +57,7 @@
 -(NSString*)		syntaxDefinitionFilenameForTextViewController: (UKSyntaxColoredTextViewController*)sender;	// Won't get called if you override syntaxDefinitionDictionaryForTextViewController:.
 -(NSDictionary*)	syntaxDefinitionDictionaryForTextViewController: (UKSyntaxColoredTextViewController*)sender;
 -(NSArray*)			userIdentifiersForKeywordComponentName: (NSString*)inModeName;	// If you can parse your code & provide a list of identifiers the user uses, you can provide this method to tell the editor about them.
+-(NSDictionary*)	textAttributesForComponentName: (NSString*)inModeName color: (NSColor*)inColor;	// If you don't just want a color, provide an NSAttributedString attributes dictionary here.
 
 @end
 
