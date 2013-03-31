@@ -162,7 +162,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
     NSTextStorage	*textStorage = [notification object];
 	NSRange			range = [textStorage editedRange];
-	int				changeInLen = [textStorage changeInLength];
+	NSUInteger		changeInLen = [textStorage changeInLength];
 	BOOL			wasInUndoRedo = [[self undoManager] isUndoing] || [[self undoManager] isRedoing];
 	BOOL			textLengthMayHaveChanged = NO;
 	
@@ -199,7 +199,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 								atIndex: currRange.location
 								effectiveRange: &effectiveRange];
 		
-		unsigned int		x = range.location;
+		NSUInteger		x = range.location;
 		
 		/* TODO: If we're in a multi-line comment and we're typing a comment-end
 			character, or we're in a string and we're typing a quote character,
@@ -271,11 +271,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	{
 		NSMutableAttributedString*  textStore = [TEXTVIEW textStorage];
 		BOOL						hadSpaces = NO;
-		unsigned int				lastSpace = affectedCharRange.location,
+		NSUInteger					lastSpace = affectedCharRange.location,
 									prevLineBreak = 0;
 		NSRange						spacesRange = { 0, 0 };
 		unichar						theChar = 0;
-		unsigned int				x = (affectedCharRange.location == 0) ? 0 : affectedCharRange.location -1;
+		NSUInteger					x = (affectedCharRange.location == 0) ? 0 : affectedCharRange.location -1;
 		NSString*					tsString = [textStore string];
 		
 		while( YES )
@@ -394,11 +394,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 //		This selects the specified line of the document.
 // -----------------------------------------------------------------------------
 
--(void)	goToLine: (int)lineNum
+-(void)	goToLine: (NSUInteger)lineNum
 {
 	NSRange			theRange = { 0, 0 };
 	NSString*		vString = [TEXTVIEW string];
-	unsigned		currLine = 1;
+	NSUInteger		currLine = 1;
 	NSCharacterSet* vSet = [NSCharacterSet characterSetWithCharactersInString: @"\n\r"];
 	unsigned		x;
 	unsigned		lastBreakOffs = 0;

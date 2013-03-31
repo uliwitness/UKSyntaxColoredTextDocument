@@ -96,9 +96,9 @@
 -(void)		setMaintainIndentation: (BOOL)state;
 -(BOOL)		maintainIndentation;
 
--(void)		goToLine: (int)lineNum;
--(void)		goToCharacter: (int)charNum;
--(void)		goToRangeFrom: (int)startCh toChar: (int)endCh;
+-(void)		goToLine: (NSUInteger)lineNum;
+-(void)		goToCharacter: (NSUInteger)charNum;
+-(void)		goToRangeFrom: (NSUInteger)startCh toChar: (NSUInteger)endCh;
 
 // Override any of the following in one of your subclasses to customize this object further:
 -(NSString*)		syntaxDefinitionFilename;   // Defaults to "SyntaxDefinition.plist" in the app bundle's "Resources" directory.
