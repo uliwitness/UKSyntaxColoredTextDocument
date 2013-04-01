@@ -474,7 +474,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 //		This selects the specified character in the document.
 // -----------------------------------------------------------------------------
 
--(void)	goToCharacter: (int)charNum
+-(void)	goToCharacter: (NSUInteger)charNum
 {
 	[self goToRangeFrom: charNum toChar: charNum +1];
 }
@@ -485,7 +485,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 //		Main bottleneck for selecting ranges in our file.
 // -----------------------------------------------------------------------------
 
--(void) goToRangeFrom: (int)startCh toChar: (int)endCh
+-(void) goToRangeFrom: (NSUInteger)startCh toChar: (NSUInteger)endCh
 {
 	NSRange		theRange = { 0, 0 };
 
@@ -528,7 +528,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	
 	NSRange				selRange = [TEXTVIEW selectedRange],
 						nuSelRange = selRange;
-	unsigned			x;
+	NSUInteger			x;
 	NSMutableString*	str = [[TEXTVIEW textStorage] mutableString];
 	
 	// Unselect any trailing returns so we don't indent the next line after a full-line selection.
@@ -566,8 +566,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
 	NSRange				selRange = [TEXTVIEW selectedRange],
 						nuSelRange = selRange;
-	unsigned			x, n;
-	unsigned			lastIndex = selRange.location +selRange.length -1;
+	NSUInteger			x, n;
+	NSUInteger			lastIndex = selRange.location +selRange.length -1;
 	NSMutableString*	str = [[TEXTVIEW textStorage] mutableString];
 	
 	// Unselect any trailing returns so we don't indent the next line after a full-line selection.
@@ -640,7 +640,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(IBAction)	toggleCommentForSelection: (id)sender
 {
 	NSRange				selRange = [TEXTVIEW selectedRange];
-	unsigned			x;
+	NSUInteger			x;
 	NSMutableString*	str = [[TEXTVIEW textStorage] mutableString];
 	
 	if( selRange.length == 0 )
@@ -687,8 +687,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
 	
 	// Unselect any trailing returns so we don't comment the next line after a full-line selection.
-	while( [str characterAtIndex: selRange.location +selRange.length -1] == '\n' ||
-				[str characterAtIndex: selRange.location +selRange.length -1] == '\r'
+	while( ([str characterAtIndex: selRange.location +selRange.length -1] == '\n' ||
+				[str characterAtIndex: selRange.location +selRange.length -1] == '\r')
 				&& selRange.length > 0 )
 	{
 		selRange.length--;
@@ -700,11 +700,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	NSString*	commentPrefix = [[self syntaxDefinitionDictionary] objectForKey: @"OneLineCommentPrefix"];
 	if( !commentPrefix || [commentPrefix length] == 0 )
 		commentPrefix = @"# ";
-	NSInteger	commentPrefixLength = [commentPrefix length];
+	NSUInteger	commentPrefixLength = [commentPrefix length];
 	NSString*	trimmedCommentPrefix = [commentPrefix stringByTrimmingCharactersInSet: [NSCharacterSet whitespaceCharacterSet]];
 	if( !trimmedCommentPrefix || [trimmedCommentPrefix length] == 0 )	// Comments apparently *are* whitespace.
 		trimmedCommentPrefix = commentPrefix;
-	NSInteger	trimmedCommentPrefixLength = [trimmedCommentPrefix length];
+	NSUInteger	trimmedCommentPrefixLength = [trimmedCommentPrefix length];
 	
 	for( x = selRange.location +selRange.length -1; x >= selRange.location; x-- )
 	{
@@ -715,7 +715,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			NSUInteger	startOffs = x+1;
 			if( hitEnd && !hitLineBreak )
 				startOffs = x;
-			NSInteger	possibleCommentLength = 0;
+			NSUInteger	possibleCommentLength = 0;
 			if( commentPrefixLength <= (selRange.length +selRange.location -startOffs) )
 				possibleCommentLength = commentPrefixLength;
 			else if( trimmedCommentPrefixLength <= (selRange.length +selRange.location -startOffs) )
@@ -815,7 +815,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			[delegate textViewControllerWillStartSyntaxRecoloring: self];
 		
 		// Kludge fix for case where we sometimes exceed text length:ra
-		int diff = [[TEXTVIEW textStorage] length] -(range.location +range.length);
+		NSInteger diff = [[TEXTVIEW textStorage] length] -(range.location +range.length);
 		if( diff < 0 )
 			range.length += diff;
 				
@@ -877,7 +877,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			else if( [vComponentType isEqualToString: @"Keywords"] )
 			{
 				NSArray* vIdents = [vCurrComponent objectForKey: @"Keywords"];
-				if( !vIdents && [delegate respondsToSelector: @selector(userIdentifiersForKeywordModeName)] )
+				if( !vIdents && [delegate respondsToSelector: @selector(userIdentifiersForKeywordComponentName:)] )
 					vIdents = [delegate userIdentifiersForKeywordComponentName: vComponentName];
 				if( !vIdents )
 					vIdents = [[NSUserDefaults standardUserDefaults] objectForKey: [@"SyntaxColoring:Keywords:" stringByAppendingString: vComponentName]];
@@ -923,14 +923,14 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(NSRange)  textView: (NSTextView*)theTextView willChangeSelectionFromCharacterRange: (NSRange)oldSelectedCharRange
 					toCharacterRange: (NSRange)newSelectedCharRange
 {
-	unsigned		startCh = newSelectedCharRange.location,
+	NSUInteger		startCh = newSelectedCharRange.location,
 					endCh = newSelectedCharRange.location +newSelectedCharRange.length;
-	unsigned		lineNo = 0,
+	NSUInteger		lineNo = 0,
 					lastLineStart = 0,
 					x = 0;
-	unsigned		startChLine = 0, endChLine = 0;
+	NSUInteger		startChLine = 0, endChLine = 0;
 	unichar			lastBreakChar = 0;
-	unsigned		lastBreakOffs = 0;
+	NSUInteger		lastBreakOffs = 0;
 
 	// Calc line number:
 	for( x = 0; (x < startCh) && (x < [[theTextView string] length]); x++ )
@@ -1079,8 +1079,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		
 		while( ![vScanner isAtEnd] )
 		{
-			int		vStartOffs,
-					vEndOffs;
+			NSUInteger		vStartOffs,
+							vEndOffs;
 			vIsEndChar = NO;
 			
 			if( vDelegateHandlesProgress )
@@ -1131,8 +1131,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		
 		while( ![vScanner isAtEnd] )
 		{
-			int		vStartOffs,
-					vEndOffs;
+			NSUInteger		vStartOffs,
+							vEndOffs;
 			
 			// Look for start of multi-line comment:
 			[vScanner scanUpToString: startCh intoString: nil];
@@ -1176,8 +1176,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		
 		while( ![vScanner isAtEnd] )
 		{
-			int		vStartOffs,
-					vEndOffs;
+			NSUInteger		vStartOffs,
+							vEndOffs;
 			
 			// Look for start of one-line comment:
 			[vScanner scanUpToString: startCh intoString: nil];
@@ -1217,7 +1217,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	{
 		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
 		NSDictionary*		vStyles = [self textAttributesForComponentName: attr color: col];
-		int					vStartOffs = 0;
+		NSUInteger			vStartOffs = 0;
 		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		// Skip any leading whitespace chars, somehow NSScanner doesn't do that:
@@ -1285,8 +1285,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		
 		while( ![vScanner isAtEnd] )
 		{
-			int		vStartOffs,
-					vEndOffs;
+			NSUInteger		vStartOffs,
+							vEndOffs;
 			
 			// Look for start of one-line comment:
 			[vScanner scanUpToString: startCh intoString: nil];

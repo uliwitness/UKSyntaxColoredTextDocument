@@ -150,25 +150,25 @@
 //	Table view data source methods:
 // -----------------------------------------------------------------------------
 
--(int)  numberOfRowsInTableView:(NSTableView *)tableView
+-(NSUInteger)  numberOfRowsInTableView: (NSTableView *)tableView
 {
 	return [[self identifiers] count];
 }
 
 
--(void) tableViewSelectionDidChange:(NSNotification *)notification
+-(void) tableViewSelectionDidChange: (NSNotification *)notification
 {
 	[removeButton setEnabled: ([identifiersList selectedRow] != -1)];   // Make sure "remove" button is only enabled if we have a selection.
 }
 
 
--(id)   tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)tableColumn row:(int)row
+-(id)   tableView: (NSTableView *)tableView objectValueForTableColumn: (NSTableColumn *)tableColumn row: (NSUInteger)row
 {
 	return [[self identifiers] objectAtIndex: row];
 }
 
 
--(void) tableView:(NSTableView *)tableView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn row:(int)row
+-(void) tableView: (NSTableView *)tableView setObjectValue: (id)object forTableColumn: (NSTableColumn *)tableColumn row: (NSUInteger)row
 {
 	[identifiers replaceObjectAtIndex: row withObject: object];
 	
