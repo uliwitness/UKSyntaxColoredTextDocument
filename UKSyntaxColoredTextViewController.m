@@ -970,6 +970,24 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 }
 
 
+-(BOOL)	respondsToSelector: (SEL)aSelector
+{
+	if( ![super respondsToSelector: aSelector] )
+		return [self.delegate respondsToSelector: aSelector];
+	else
+		return YES;
+}
+
+
+-(id)	forwardingTargetForSelector: (SEL)aSelector
+{
+	id	newTarget = [super forwardingTargetForSelector: aSelector];
+	if( newTarget == nil )
+		return self.delegate;
+	return  newTarget;
+}
+
+
 // -----------------------------------------------------------------------------
 //	syntaxDefinitionFilename
 //		Like nibName, this should return the name of the syntax

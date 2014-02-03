@@ -42,7 +42,7 @@
 
 @class UKSyntaxColoredTextViewController;
 
-@protocol UKSyntaxColoredTextViewDelegate <NSObject>
+@protocol UKSyntaxColoredTextViewDelegate <NSObject,NSTextViewDelegate>
 
 @optional
 -(void)	textViewControllerWillStartSyntaxRecoloring: (UKSyntaxColoredTextViewController*)sender;		// Show your progress indicator.
@@ -75,7 +75,7 @@
 	BOOL								syntaxColoringBusy;		// Set while recolorRange is busy, so we don't recursively call recolorRange.
 	NSRange								affectedCharRange;
 	NSString*							replacementString;
-	id<UKSyntaxColoredTextViewDelegate>	delegate;
+	IBOutlet id<UKSyntaxColoredTextViewDelegate>	delegate;
 }
 
 +(void) 	makeSurePrefsAreInited;		// No need to call this.
