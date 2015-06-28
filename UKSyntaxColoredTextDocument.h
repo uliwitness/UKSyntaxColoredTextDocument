@@ -44,7 +44,7 @@
 
 
 // Syntax-colored text file viewer:
-@interface UKSyntaxColoredTextDocument : NSDocument <UKSyntaxColoredTextViewDelegate>
+@interface UKSyntaxColoredTextDocument : NSDocument <UKSyntaxColoredTextViewDelegate, UKTextDocGoToBoxTarget>
 {
 	IBOutlet NSTextView*				textView;					// The text view used for editing code.
 	IBOutlet NSProgressIndicator*		progress;					// Progress indicator while coloring syntax.

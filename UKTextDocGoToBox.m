@@ -88,9 +88,9 @@
 
 -(IBAction) goToLineOrChar:(id)sender
 {
-	int		num;
+	NSInteger		num;
 	
-	num = [lineNumField intValue];
+	num = [lineNumField integerValue];
 	
 	if( [lineCharChooser selectedRow] == 0 )
 		[targetDocument goToLine: num];

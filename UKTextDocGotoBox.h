@@ -46,8 +46,8 @@
 // targetDocument must support this protocol:
 @protocol UKTextDocGoToBoxTarget
 
--(void) goToLine: (int)num;
--(void) goToCharacter: (int)num;
+-(void) goToLine: (NSUInteger)num;
+-(void) goToCharacter: (NSUInteger)num;
 
 @end
 

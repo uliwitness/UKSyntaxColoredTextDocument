@@ -281,4 +281,27 @@
 	[syntaxColoringController recolorCompleteFile: sender];
 }
 
+
+// -----------------------------------------------------------------------------
+//	goToLine:
+//		This selects the specified line of the document.
+// -----------------------------------------------------------------------------
+
+-(void)	goToLine: (NSUInteger)lineNum
+{
+	[syntaxColoringController goToLine: lineNum];
+}
+
+
+// -----------------------------------------------------------------------------
+//	goToCharacter:
+//		This selects the specified character in the document.
+// -----------------------------------------------------------------------------
+
+-(void)	goToCharacter: (NSUInteger)charNum
+{
+	[syntaxColoringController goToRangeFrom: charNum toChar: charNum +1];
+}
+
+
 @end
