@@ -57,6 +57,6 @@
 -(void) tableViewSelectionDidChange:(NSNotification *)notification;
 
 // Private:
--(NSMutableArray*)  identifiers;					// Accessor that lazily instantiates the "identifiers" array when first needed.
+@property (nonatomic, readonly, copy) NSMutableArray *identifiers;					// Accessor that lazily instantiates the "identifiers" array when first needed.
 
 @end

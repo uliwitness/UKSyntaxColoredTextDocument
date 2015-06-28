@@ -90,19 +90,17 @@
 -(IBAction) unindentSelection: (id)sender;
 -(IBAction)	toggleCommentForSelection: (id)sender;
 
--(void)		setAutoSyntaxColoring: (BOOL)state;
--(BOOL)		autoSyntaxColoring;
+@property (nonatomic) BOOL autoSyntaxColoring;
 
--(void)		setMaintainIndentation: (BOOL)state;
--(BOOL)		maintainIndentation;
+@property (nonatomic) BOOL maintainIndentation;
 
 -(void)		goToLine: (NSUInteger)lineNum;
 -(void)		goToCharacter: (NSUInteger)charNum;
 -(void)		goToRangeFrom: (NSUInteger)startCh toChar: (NSUInteger)endCh;
 
 // Override any of the following in one of your subclasses to customize this object further:
--(NSString*)		syntaxDefinitionFilename;   // Defaults to "SyntaxDefinition.plist" in the app bundle's "Resources" directory.
--(NSDictionary*)	syntaxDefinitionDictionary; // Defaults to loading plist from -syntaxDefinitionFilename.
+@property (nonatomic, readonly, copy) NSString *syntaxDefinitionFilename;   // Defaults to "SyntaxDefinition.plist" in the app bundle's "Resources" directory.
+@property (nonatomic, readonly, copy) NSDictionary *syntaxDefinitionDictionary; // Defaults to loading plist from -syntaxDefinitionFilename.
 
 -(NSDictionary*)	defaultTextAttributes;		// Style attributes dictionary for an NSAttributedString.
 -(NSRange)			defaultSelectedRange;		// Selected text range when document is opened.

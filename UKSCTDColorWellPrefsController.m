@@ -225,7 +225,7 @@
 	
 	while( (currKey = [keysEnny nextObject]) )
 	{
-		currValue = [newValues objectForKey: currKey];
+		currValue = newValues[currKey];
 		[ud setObject: currValue forKey: currKey];
 	}
 	

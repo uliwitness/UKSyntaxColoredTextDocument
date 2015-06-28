@@ -63,7 +63,7 @@
 -(IBAction)	toggleCommentForSelection: (id)sender;
 -(IBAction)	recolorCompleteFile: (id)sender;
 
--(NSStringEncoding)	stringEncoding;
+@property (nonatomic, readonly) NSStringEncoding stringEncoding;
 
 @end
 

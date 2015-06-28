@@ -141,10 +141,10 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 		[currItem setTag: x++]; // Remember array index of this one.
 		
 		NSDictionary*	dict = [NSDictionary dictionaryWithContentsOfFile: currPath];
-		NSEnumerator*	suffixEnny = [[dict objectForKey: @"FileNameSuffixes"] objectEnumerator];
+		NSEnumerator*	suffixEnny = [dict[@"FileNameSuffixes"] objectEnumerator];
 		NSString*		suffix = nil;
 		while(( suffix = [suffixEnny nextObject] ))
-			[sUKMSCTDSuffixToTagMappings setObject: [NSNumber numberWithInt: x -1] forKey: suffix];
+			sUKMSCTDSuffixToTagMappings[suffix] = @(x -1);
 	}
 }
 
@@ -207,12 +207,12 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 //		2004-05-17	witness	Created.
 // -----------------------------------------------------------------------------
 
--(id)	init
+-(instancetype)	init
 {
     self = [super init];
     if( self )
 	{
-		syntaxDefinitionFilename = [[[self syntaxDefinitionFiles] objectAtIndex: 0] retain];
+		syntaxDefinitionFilename = [[self syntaxDefinitionFiles][0] retain];
 	}
     return self;
 }
@@ -250,9 +250,9 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 		[self rebuildSyntaxMenu];
 	
 	NSString*		fileSuffix = [[self fileURL] pathExtension];
-	NSNumber*		numObj = [sUKMSCTDSuffixToTagMappings objectForKey: fileSuffix];
+	NSNumber*		numObj = sUKMSCTDSuffixToTagMappings[fileSuffix];
 	if( numObj )
-		[self setSyntaxDefinitionFilename: [sUKMSCTDSyntaxDefinitionFiles objectAtIndex: [numObj intValue]]];
+		[self setSyntaxDefinitionFilename: sUKMSCTDSyntaxDefinitionFiles[[numObj intValue]]];
 	
 	[super windowControllerDidLoadNib: windowController];
 }
@@ -317,7 +317,7 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 
 -(IBAction) takeSyntaxDefinitionFilenameFromTagOf: (id)sender
 {
-	[self setSyntaxDefinitionFilename: [sUKMSCTDSyntaxDefinitionFiles objectAtIndex: [sender tag]]];
+	[self setSyntaxDefinitionFilename: sUKMSCTDSyntaxDefinitionFiles[[sender tag]]];
 }
 
 
@@ -334,7 +334,7 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 {
 	if( [anItem action] == @selector(takeSyntaxDefinitionFilenameFromTagOf:) )
 	{
-		[anItem setState: ([[sUKMSCTDSyntaxDefinitionFiles objectAtIndex: [anItem tag]] isEqualToString: [self syntaxDefinitionFilename]])];
+		[anItem setState: ([sUKMSCTDSyntaxDefinitionFiles[[anItem tag]] isEqualToString: [self syntaxDefinitionFilename]])];
 		
 		return( [anItem tag] < [sUKMSCTDSyntaxDefinitionFiles count] );
 	}
