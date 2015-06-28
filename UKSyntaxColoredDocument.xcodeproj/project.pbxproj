@@ -17,6 +17,8 @@
 		3D5D9F3908873A3600058C2B /* UKSyntaxColoredTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5D9F3708873A3600058C2B /* UKSyntaxColoredTextDocument.m */; };
 		3D5D9F3C08873A4B00058C2B /* NSArray+Color.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D5D9F3A08873A4B00058C2B /* NSArray+Color.h */; };
 		3D5D9F3D08873A4B00058C2B /* NSArray+Color.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D5D9F3B08873A4B00058C2B /* NSArray+Color.m */; };
+		3D6AA2B61B408B5B00ACB655 /* NSNumber+JXCGFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D6AA2B41B408B5B00ACB655 /* NSNumber+JXCGFloat.h */; };
+		3D6AA2B71B408B5B00ACB655 /* NSNumber+JXCGFloat.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D6AA2B51B408B5B00ACB655 /* NSNumber+JXCGFloat.m */; };
 		3D70D4BD06594E70006EC8D8 /* UKMultiSyntaxColoredTextDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D70D4BB06594E70006EC8D8 /* UKMultiSyntaxColoredTextDocument.h */; };
 		3D70D4BE06594E70006EC8D8 /* UKMultiSyntaxColoredTextDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D70D4BC06594E70006EC8D8 /* UKMultiSyntaxColoredTextDocument.m */; };
 		3D70D4CB065A179C006EC8D8 /* NSMenu+DeepSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D70D4C9065A179C006EC8D8 /* NSMenu+DeepSearch.h */; };
@@ -62,6 +64,8 @@
 		3D5D9F3708873A3600058C2B /* UKSyntaxColoredTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = UKSyntaxColoredTextDocument.m; sourceTree = "<group>"; };
 		3D5D9F3A08873A4B00058C2B /* NSArray+Color.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = "NSArray+Color.h"; sourceTree = "<group>"; };
 		3D5D9F3B08873A4B00058C2B /* NSArray+Color.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = "NSArray+Color.m"; sourceTree = "<group>"; };
+		3D6AA2B41B408B5B00ACB655 /* NSNumber+JXCGFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSNumber+JXCGFloat.h"; sourceTree = "<group>"; };
+		3D6AA2B51B408B5B00ACB655 /* NSNumber+JXCGFloat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSNumber+JXCGFloat.m"; sourceTree = "<group>"; };
 		3D70D4BB06594E70006EC8D8 /* UKMultiSyntaxColoredTextDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UKMultiSyntaxColoredTextDocument.h; sourceTree = "<group>"; };
 		3D70D4BC06594E70006EC8D8 /* UKMultiSyntaxColoredTextDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UKMultiSyntaxColoredTextDocument.m; sourceTree = "<group>"; };
 		3D70D4C9065A179C006EC8D8 /* NSMenu+DeepSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMenu+DeepSearch.h"; sourceTree = "<group>"; };
@@ -211,6 +215,8 @@
 				3D1A2A18058BC7B200E623FD /* NSScanner+SkipUpToCharset.m */,
 				3D5D9F3A08873A4B00058C2B /* NSArray+Color.h */,
 				3D5D9F3B08873A4B00058C2B /* NSArray+Color.m */,
+				3D6AA2B41B408B5B00ACB655 /* NSNumber+JXCGFloat.h */,
+				3D6AA2B51B408B5B00ACB655 /* NSNumber+JXCGFloat.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -233,6 +239,7 @@
 				3D5D9F3C08873A4B00058C2B /* NSArray+Color.h in Headers */,
 				55F40EF71143C4E500B2BC40 /* UKSCTDGradientBar.h in Headers */,
 				55255A4B114C077D00279B03 /* UKSyntaxColoredTextViewController.h in Headers */,
+				3D6AA2B61B408B5B00ACB655 /* NSNumber+JXCGFloat.h in Headers */,
 				550765DE14CAC220008CFDF2 /* UKHelperMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -264,6 +271,8 @@
 /* Begin PBXProject section */
 		2A37F4A9FDCFA73011CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 3D5D9F3208873A1700058C2B /* Build configuration list for PBXProject "UKSyntaxColoredDocument" */;
 			compatibilityVersion = "Xcode 2.4";
 			developmentRegion = English;
@@ -315,6 +324,7 @@
 				3D5D9F3908873A3600058C2B /* UKSyntaxColoredTextDocument.m in Sources */,
 				3D5D9F3D08873A4B00058C2B /* NSArray+Color.m in Sources */,
 				55F40EF81143C4E500B2BC40 /* UKSCTDGradientBar.m in Sources */,
+				3D6AA2B71B408B5B00ACB655 /* NSNumber+JXCGFloat.m in Sources */,
 				55255A4C114C077D00279B03 /* UKSyntaxColoredTextViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

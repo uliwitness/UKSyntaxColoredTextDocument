@@ -31,6 +31,7 @@
 
 #import "NSArray+Color.h"
 
+#import "NSNumber+JXCGFloat.h"
 
 @implementation NSArray (UKColor)
 
@@ -50,8 +51,10 @@
 	col = [col colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
 	[col getRed: &fRed green: &fGreen blue: &fBlue alpha: &fAlpha];
 	
-	return [self arrayWithObjects: [NSNumber numberWithFloat:fRed], [NSNumber numberWithFloat:fGreen],
-									[NSNumber numberWithFloat:fBlue], [NSNumber numberWithFloat:fAlpha], nil];
+	return @[[NSNumber numberWithCGFloatJX:fRed],
+			 [NSNumber numberWithCGFloatJX:fGreen],
+			 [NSNumber numberWithCGFloatJX:fBlue],
+			 [NSNumber numberWithCGFloatJX:fAlpha]];
 }
 
 
@@ -70,12 +73,12 @@
 	
 	if( [self count] >= 3 )
 	{
-		fRed = [[self objectAtIndex:0] floatValue];
-		fGreen = [[self objectAtIndex:1] floatValue];
-		fBlue = [[self objectAtIndex:2] floatValue];
+		fRed = [self[0] CGFloatValueJX];
+		fGreen = [self[1] CGFloatValueJX];
+		fBlue = [self[2] CGFloatValueJX];
 	}
 	if( [self count] > 3 )	// Have alpha info?
-		fAlpha = [[self objectAtIndex:3] floatValue];
+		fAlpha = [self[3] floatValue];
 	
 	return [NSColor colorWithCalibratedRed: fRed green: fGreen blue: fBlue alpha: fAlpha];
 }
