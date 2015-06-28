@@ -33,12 +33,6 @@
 -(void)	dealloc
 {
 	[syntaxColoringController setDelegate: nil];
-	[syntaxColoringController release];
-	syntaxColoringController = nil;
-	[sourceCode release];
-	sourceCode = nil;
-	
-	[super dealloc];
 }
 
 
@@ -75,7 +69,6 @@
 	if( sourceCode != nil )
 	{
 		[textView setString: sourceCode];
-		[sourceCode release];
 		sourceCode = nil;
 	}
 	
@@ -158,7 +151,7 @@
 	// sourceCode is a member variable:
 	if( sourceCode )
 	{
-		[sourceCode release];   // Release any old text.
+		// Release any old text.
 		sourceCode = nil;
 	}
 	sourceCode = [[NSString alloc] initWithData:data encoding: [self stringEncoding]]; // Load the new text.

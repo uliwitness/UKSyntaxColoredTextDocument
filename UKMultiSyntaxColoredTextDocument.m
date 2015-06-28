@@ -190,7 +190,6 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 
 -(void) reloadSyntaxDefinitionFiles
 {
-	[sUKMSCTDSyntaxDefinitionFiles release];
 	sUKMSCTDSyntaxDefinitionFiles = nil;
 	
 	[self syntaxDefinitionFiles];
@@ -212,26 +211,9 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
     self = [super init];
     if( self )
 	{
-		syntaxDefinitionFilename = [[self syntaxDefinitionFiles][0] retain];
+		syntaxDefinitionFilename = [self syntaxDefinitionFiles][0];
 	}
     return self;
-}
-
-
-// -----------------------------------------------------------------------------
-//	* DESTRUCTOR:
-//
-//	REVISIONS:
-//		2004-05-18	witness	Documented.
-//		2004-05-17	witness	Created.
-// -----------------------------------------------------------------------------
-
--(void) dealloc
-{
-    [syntaxDefinitionFilename release];
-    syntaxDefinitionFilename = nil;
-
-    [super dealloc];
 }
 
 
@@ -280,7 +262,7 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 
 -(NSString*)	syntaxDefinitionFilename
 {
-    return [[syntaxDefinitionFilename retain] autorelease]; 
+    return syntaxDefinitionFilename; 
 }
 
 
@@ -296,8 +278,6 @@ NSString*	UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged = @"UKMultiSyn
 
 -(void) setSyntaxDefinitionFilename:(NSString *)aSyntaxDefinitionFileName
 {
-    [aSyntaxDefinitionFileName retain];
-    [syntaxDefinitionFilename release];
     syntaxDefinitionFilename = aSyntaxDefinitionFileName;
 	
 	[[NSNotificationCenter defaultCenter] postNotificationName: UKMultiSyntaxColoredTextDocumentSyntaxDefinitionChanged object: self];

@@ -91,10 +91,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(void)	dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	
-	DESTROY_DEALLOC(replacementString);
-	
-	[super dealloc];
 }
 
 
@@ -252,10 +248,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		affectedCharRange = afcr;
 		if( replacementString )
 		{
-			[replacementString release];
 			replacementString = nil;
 		}
-		replacementString = [rps retain];
+		replacementString = rps;
 		
 		[self performSelector: @selector(didChangeText) withObject: nil afterDelay: 0.0];	// Queue this up on the event loop. If we change the text here, we only confuse the undo stack.
 	}
@@ -523,7 +518,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(IBAction) indentSelection: (id)sender
 {
 	[[self undoManager] beginUndoGrouping];
-	NSString*	prevText = [[[[TEXTVIEW textStorage] string] copy] autorelease];
+	NSString*	prevText = [[[TEXTVIEW textStorage] string] copy];
 	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
 	
 	NSRange				selRange = [TEXTVIEW selectedRange],
@@ -579,7 +574,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		return;
 	
 	[[self undoManager] beginUndoGrouping];
-	NSString*	prevText = [[[[TEXTVIEW textStorage] string] copy] autorelease];
+	NSString*	prevText = [[[TEXTVIEW textStorage] string] copy];
 	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
 		
 	for( x = lastIndex; x >= selRange.location; x-- )
@@ -683,7 +678,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		return;
 	
 	[[self undoManager] beginUndoGrouping];
-	NSString*	prevText = [[[[TEXTVIEW textStorage] string] copy] autorelease];
+	NSString*	prevText = [[[TEXTVIEW textStorage] string] copy];
 	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
 	
 	// Unselect any trailing returns so we don't comment the next line after a full-line selection.
@@ -822,7 +817,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		// Get the text we'll be working with:
 		NSDictionary*				vStyles = [self defaultTextAttributes];
 		NSMutableAttributedString*	vString = [[NSMutableAttributedString alloc] initWithString: [[[TEXTVIEW textStorage] string] substringWithRange: range] attributes: vStyles];
-		[vString autorelease];
 				
 		// Load colors and fonts to use from preferences:
 		// Load our dictionary which contains info on coloring this language:
@@ -1059,7 +1053,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(NSDictionary*)	textAttributesForComponentName: (NSString*)attr color: (NSColor*)col
 {
 	NSDictionary*		vLocalStyles = [delegate respondsToSelector:@selector(textAttributesForComponentName:color:)] ? [delegate textAttributesForComponentName: attr color: col] : nil;
-	NSMutableDictionary*vStyles = [[[self defaultTextAttributes] mutableCopy] autorelease];
+	NSMutableDictionary*vStyles = [[self defaultTextAttributes] mutableCopy];
 	if( vLocalStyles )
 		[vStyles addEntriesFromDictionary: vLocalStyles];
 	else

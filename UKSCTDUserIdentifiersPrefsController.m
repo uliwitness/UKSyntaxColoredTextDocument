@@ -55,22 +55,6 @@
 
 
 // -----------------------------------------------------------------------------
-//	* DESTRUCTOR:
-//
-//	REVISIONS:
-//		2004-05-18	witness	Documented.
-// -----------------------------------------------------------------------------
-
--(void) dealloc
-{
-    [identifiers release];
-    identifiers = nil;
-
-    [super dealloc];
-}
-
-
-// -----------------------------------------------------------------------------
 //	awakeFromNib:
 //		Make sure GUI looks right after it's been loaded.
 //
