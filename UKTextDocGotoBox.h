@@ -63,6 +63,8 @@
     IBOutlet NSTextField					*lineNumField;
     IBOutlet NSButton						*okayButton;
     IBOutlet id	<UKTextDocGoToBoxTarget>	targetDocument;		// Object whom we send goToLine or goToCharacter messages.
+	
+	NSWindow								*_owner;
 }
 
 // This is what you want to call:
