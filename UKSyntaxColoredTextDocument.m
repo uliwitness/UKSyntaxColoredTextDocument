@@ -131,22 +131,22 @@
 
 
 /* -----------------------------------------------------------------------------
-	dataRepresentationOfType:
-		Save raw text to a file as MacRoman text.
+	dataOfType:error:
+		Save raw text to a file as stringEncoding text.
    -------------------------------------------------------------------------- */
 
--(NSData*)	dataRepresentationOfType: (NSString*)aType
+-(NSData*)	dataOfType: (NSString*)aType error: (NSError**)outError
 {
     return [[textView string] dataUsingEncoding: [self stringEncoding] allowLossyConversion: YES];
 }
 
 
 /* -----------------------------------------------------------------------------
-	loadDataRepresentation:ofType:
-		Load plain MacRoman text from a text file.
+	readFromData:ofType:error:
+		Load plain stringEncoding text from a text file.
    -------------------------------------------------------------------------- */
 
--(BOOL)	loadDataRepresentation: (NSData*)data ofType: (NSString*)aType
+-(BOOL)	readFromData: (NSData*)data ofType: (NSString*)aType error: (NSError **)outError
 {
 	// sourceCode is a member variable:
 	if( sourceCode )
