@@ -149,11 +149,6 @@
 -(BOOL)	readFromData: (NSData*)data ofType: (NSString*)aType error: (NSError **)outError
 {
 	// sourceCode is a member variable:
-	if( sourceCode )
-	{
-		// Release any old text.
-		sourceCode = nil;
-	}
 	sourceCode = [[NSString alloc] initWithData:data encoding: [self stringEncoding]]; // Load the new text.
 	
 	/* Try to load it into textView and syntax colorize it: */
