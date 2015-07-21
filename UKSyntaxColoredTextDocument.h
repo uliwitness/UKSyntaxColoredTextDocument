@@ -44,7 +44,7 @@
 
 
 // Syntax-colored text file viewer:
-@interface UKSyntaxColoredTextDocument : NSDocument <UKSyntaxColoredTextViewDelegate>
+@interface UKSyntaxColoredTextDocument : NSDocument <UKSyntaxColoredTextViewDelegate, UKTextDocGoToBoxTarget>
 {
 	IBOutlet NSTextView*				textView;					// The text view used for editing code.
 	IBOutlet NSProgressIndicator*		progress;					// Progress indicator while coloring syntax.
@@ -63,7 +63,7 @@
 -(IBAction)	toggleCommentForSelection: (id)sender;
 -(IBAction)	recolorCompleteFile: (id)sender;
 
--(NSStringEncoding)	stringEncoding;
+@property (nonatomic, readonly) NSStringEncoding stringEncoding;
 
 @end
 
@@ -71,8 +71,6 @@
 
 // Support for external editor interface:
 //	(Doesn't really work yet ... *sigh*)
-
-#pragma options align=mac68k
 
 struct SelectionRange
 {
@@ -83,6 +81,4 @@ struct SelectionRange
 	long	unused2;	// 0 (not used)
 	long	theDate;	// modification date/time
 };
-
-#pragma options align=reset
 

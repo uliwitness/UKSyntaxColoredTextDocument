@@ -42,7 +42,7 @@
 //		2004-05-18	witness	Documented.
 // -----------------------------------------------------------------------------
 
--(id) init
+-(instancetype) init
 {
 	self = [super init];
 	if( self )
@@ -51,22 +51,6 @@
 	}
 	
 	return self;
-}
-
-
-// -----------------------------------------------------------------------------
-//	* DESTRUCTOR:
-//
-//	REVISIONS:
-//		2004-05-18	witness	Documented.
-// -----------------------------------------------------------------------------
-
--(void) dealloc
-{
-    [identifiers release];
-    identifiers = nil;
-
-    [super dealloc];
 }
 
 
@@ -164,13 +148,13 @@
 
 -(id)   tableView: (NSTableView *)tableView objectValueForTableColumn: (NSTableColumn *)tableColumn row: (NSUInteger)row
 {
-	return [[self identifiers] objectAtIndex: row];
+	return [self identifiers][row];
 }
 
 
 -(void) tableView: (NSTableView *)tableView setObjectValue: (id)object forTableColumn: (NSTableColumn *)tableColumn row: (NSUInteger)row
 {
-	[identifiers replaceObjectAtIndex: row withObject: object];
+	identifiers[row] = object;
 	
 	[[NSUserDefaults standardUserDefaults] setObject: [self identifiers]
 		forKey: TD_USER_DEFINED_IDENTIFIERS];

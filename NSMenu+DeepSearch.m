@@ -47,7 +47,7 @@
 -(NSMenuItem*)  findItemWithTarget: (id)targ andAction: (SEL)action
 {
 	// Look in this menu:
-	int itemIndex = [self indexOfItemWithTarget: targ andAction: action];
+	NSInteger itemIndex = [self indexOfItemWithTarget: targ andAction: action];
 	if( itemIndex >= 0 )
 		return [self itemAtIndex: itemIndex];   // Return the item we found in this menu.
 	

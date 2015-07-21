@@ -77,8 +77,7 @@
 	IBOutlet NSMenu*		syntaxDefinitionMenu;		// If you use a popup menu, connect its menu to this outlet.
 }
 
--(NSString*)	syntaxDefinitionFilename;
--(void)			setSyntaxDefinitionFilename:(NSString *)aSyntaxDefinitionFileName;
+@property (nonatomic, copy) NSString *syntaxDefinitionFilename;
 
 -(IBAction)		takeSyntaxDefinitionFilenameFromTagOf: (id)sender;  // Menu action!
 

@@ -75,7 +75,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 //		storage for the text until the NIB's been loaded.
 // -----------------------------------------------------------------------------
 
--(id)	initWithNibName: (NSString*)inNibName bundle: (NSBundle*)inBundle
+-(instancetype)	initWithNibName: (NSString*)inNibName bundle: (NSBundle*)inBundle
 {
     self = [super initWithNibName: inNibName bundle: inBundle];
     if( self )
@@ -91,10 +91,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(void)	dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	
-	DESTROY_DEALLOC(replacementString);
-	
-	[super dealloc];
 }
 
 
@@ -252,10 +248,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		affectedCharRange = afcr;
 		if( replacementString )
 		{
-			[replacementString release];
 			replacementString = nil;
 		}
-		replacementString = [rps retain];
+		replacementString = rps;
 		
 		[self performSelector: @selector(didChangeText) withObject: nil afterDelay: 0.0];	// Queue this up on the event loop. If we change the text here, we only confuse the undo stack.
 	}
@@ -523,7 +518,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(IBAction) indentSelection: (id)sender
 {
 	[[self undoManager] beginUndoGrouping];
-	NSString*	prevText = [[[[TEXTVIEW textStorage] string] copy] autorelease];
+	NSString*	prevText = [[[TEXTVIEW textStorage] string] copy];
 	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
 	
 	NSRange				selRange = [TEXTVIEW selectedRange],
@@ -579,7 +574,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		return;
 	
 	[[self undoManager] beginUndoGrouping];
-	NSString*	prevText = [[[[TEXTVIEW textStorage] string] copy] autorelease];
+	NSString*	prevText = [[[TEXTVIEW textStorage] string] copy];
 	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
 		
 	for( x = lastIndex; x >= selRange.location; x-- )
@@ -683,7 +678,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		return;
 	
 	[[self undoManager] beginUndoGrouping];
-	NSString*	prevText = [[[[TEXTVIEW textStorage] string] copy] autorelease];
+	NSString*	prevText = [[[TEXTVIEW textStorage] string] copy];
 	[[self undoManager] registerUndoWithTarget: self selector: @selector(restoreText:) object: prevText];
 	
 	// Unselect any trailing returns so we don't comment the next line after a full-line selection.
@@ -697,7 +692,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	
 	NSRange nuSelRange = selRange;
 	
-	NSString*	commentPrefix = [[self syntaxDefinitionDictionary] objectForKey: @"OneLineCommentPrefix"];
+	NSString*	commentPrefix = [self syntaxDefinitionDictionary][@"OneLineCommentPrefix"];
 	if( !commentPrefix || [commentPrefix length] == 0 )
 		commentPrefix = @"# ";
 	NSUInteger	commentPrefixLength = [commentPrefix length];
@@ -822,12 +817,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		// Get the text we'll be working with:
 		NSDictionary*				vStyles = [self defaultTextAttributes];
 		NSMutableAttributedString*	vString = [[NSMutableAttributedString alloc] initWithString: [[[TEXTVIEW textStorage] string] substringWithRange: range] attributes: vStyles];
-		[vString autorelease];
 				
 		// Load colors and fonts to use from preferences:
 		// Load our dictionary which contains info on coloring this language:
 		NSDictionary*				vSyntaxDefinition = [self syntaxDefinitionDictionary];
-		NSEnumerator*				vComponentsEnny = [[vSyntaxDefinition objectForKey: @"Components"] objectEnumerator];
+		NSEnumerator*				vComponentsEnny = [vSyntaxDefinition[@"Components"] objectEnumerator];
 		
 		if( vComponentsEnny == nil )	// No list of components to colorize?
 		{
@@ -841,42 +835,42 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 		while( (vCurrComponent = [vComponentsEnny nextObject]) )
 		{
-			NSString*   vComponentType = [vCurrComponent objectForKey: @"Type"];
-			NSString*   vComponentName = [vCurrComponent objectForKey: @"Name"];
+			NSString*   vComponentType = vCurrComponent[@"Type"];
+			NSString*   vComponentName = vCurrComponent[@"Name"];
 			NSString*   vColorKeyName = [@"SyntaxColoring:Color:" stringByAppendingString: vComponentName];
 			NSColor*	vColor = [[vPrefs arrayForKey: vColorKeyName] colorValue];
 			
 			if( !vColor )
-				vColor = [[vCurrComponent objectForKey: @"Color"] colorValue];
+				vColor = [vCurrComponent[@"Color"] colorValue];
 			
 			if( [vComponentType isEqualToString: @"BlockComment"] )
 			{
-				[self colorCommentsFrom: [vCurrComponent objectForKey: @"Start"]
-						to: [vCurrComponent objectForKey: @"End"] inString: vString
+				[self colorCommentsFrom: vCurrComponent[@"Start"]
+						to: vCurrComponent[@"End"] inString: vString
 						withColor: vColor andMode: vComponentName];
 			}
 			else if( [vComponentType isEqualToString: @"OneLineComment"] )
 			{
-				[self colorOneLineComment: [vCurrComponent objectForKey: @"Start"]
+				[self colorOneLineComment: vCurrComponent[@"Start"]
 						inString: vString withColor: vColor andMode: vComponentName];
 			}
 			else if( [vComponentType isEqualToString: @"String"] )
 			{
-				[self colorStringsFrom: [vCurrComponent objectForKey: @"Start"]
-						to: [vCurrComponent objectForKey: @"End"]
+				[self colorStringsFrom: vCurrComponent[@"Start"]
+						to: vCurrComponent[@"End"]
 						inString: vString withColor: vColor andMode: vComponentName
-						andEscapeChar: [vCurrComponent objectForKey: @"EscapeChar"]]; 
+						andEscapeChar: vCurrComponent[@"EscapeChar"]]; 
 			}
 			else if( [vComponentType isEqualToString: @"Tag"] )
 			{
-				[self colorTagFrom: [vCurrComponent objectForKey: @"Start"]
-						to: [vCurrComponent objectForKey: @"End"] inString: vString
+				[self colorTagFrom: vCurrComponent[@"Start"]
+						to: vCurrComponent[@"End"] inString: vString
 						withColor: vColor andMode: vComponentName
-						exceptIfMode: [vCurrComponent objectForKey: @"IgnoredComponent"]];
+						exceptIfMode: vCurrComponent[@"IgnoredComponent"]];
 			}
 			else if( [vComponentType isEqualToString: @"Keywords"] )
 			{
-				NSArray* vIdents = [vCurrComponent objectForKey: @"Keywords"];
+				NSArray* vIdents = vCurrComponent[@"Keywords"];
 				if( !vIdents && [delegate respondsToSelector: @selector(userIdentifiersForKeywordComponentName:)] )
 					vIdents = [delegate userIdentifiersForKeywordComponentName: vComponentName];
 				if( !vIdents )
@@ -887,7 +881,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 				{
 					NSCharacterSet*		vIdentCharset = nil;
 					NSString*			vCurrIdent = nil;
-					NSString*			vCsStr = [vCurrComponent objectForKey: @"Charset"];
+					NSString*			vCsStr = vCurrComponent[@"Charset"];
 					if( vCsStr )
 						vIdentCharset = [NSCharacterSet characterSetWithCharactersInString: vCsStr];
 					
@@ -1059,14 +1053,14 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(NSDictionary*)	textAttributesForComponentName: (NSString*)attr color: (NSColor*)col
 {
 	NSDictionary*		vLocalStyles = [delegate respondsToSelector:@selector(textAttributesForComponentName:color:)] ? [delegate textAttributesForComponentName: attr color: col] : nil;
-	NSMutableDictionary*vStyles = [[[self defaultTextAttributes] mutableCopy] autorelease];
+	NSMutableDictionary*vStyles = [[self defaultTextAttributes] mutableCopy];
 	if( vLocalStyles )
 		[vStyles addEntriesFromDictionary: vLocalStyles];
 	else
-		[vStyles setObject: col forKey: NSForegroundColorAttributeName];
+		vStyles[NSForegroundColorAttributeName] = col;
 	
 	// Make sure partial recoloring works:
-	[vStyles setObject: attr forKey: TD_SYNTAX_COLORING_MODE_ATTR];
+	vStyles[TD_SYNTAX_COLORING_MODE_ATTR] = attr;
 	
 	return vStyles;
 }
@@ -1311,7 +1305,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			vStartOffs = [vScanner scanLocation];
 			if( vStartOffs >= [s length] )
 				return;
-			NSString*   scMode = [[s attributesAtIndex:vStartOffs effectiveRange: nil] objectForKey: TD_SYNTAX_COLORING_MODE_ATTR];
+			NSString*   scMode = [s attributesAtIndex:vStartOffs effectiveRange: nil][TD_SYNTAX_COLORING_MODE_ATTR];
 			if( ![vScanner scanString:startCh intoString:nil] )
 				return;
 			
@@ -1330,7 +1324,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 				vEndOffs = [vScanner scanLocation];
 				if( vEndOffs < [s length] )
 				{
-					scMode = [[s attributesAtIndex:vEndOffs effectiveRange: nil] objectForKey: TD_SYNTAX_COLORING_MODE_ATTR];
+					scMode = [s attributesAtIndex:vEndOffs effectiveRange: nil][TD_SYNTAX_COLORING_MODE_ATTR];
 					[vScanner scanString: endCh intoString: nil];   // Also skip the terminating sequence.
 					if( ignoreAttr == nil || ![scMode isEqualToString: ignoreAttr] )
 						break;
@@ -1362,7 +1356,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 -(NSDictionary*)	defaultTextAttributes
 {
-	return [NSDictionary dictionaryWithObjectsAndKeys: [NSFont userFixedPitchFontOfSize: 10.0], NSFontAttributeName, nil];
+	return @{NSFontAttributeName: [NSFont userFixedPitchFontOfSize: 10.0]};
 }
 
 

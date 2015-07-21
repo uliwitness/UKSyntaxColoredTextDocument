@@ -42,7 +42,13 @@
 
 -(IBAction) showGoToSheet: (NSWindow*)owner
 {
-	[[NSApplication sharedApplication] beginSheet:goToPanel modalForWindow:owner modalDelegate:self didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:) contextInfo:nil];
+	// Will fail, if this sheet instance is used with multiple windows concurrently.
+	// _owner would be clobbered.
+	_owner = owner;
+	[owner beginSheet:goToPanel
+	completionHandler:^(NSModalResponse returnCode) {
+		[goToPanel orderOut:nil];
+	}];
 }
 
 
@@ -57,22 +63,7 @@
 
 -(IBAction) hideGoToSheet: (id)sender
 {
-	[[NSApplication sharedApplication] endSheet: goToPanel];
-}
-
-
-// -----------------------------------------------------------------------------
-//	sheetDidEnd:
-//		Called when endSheet has been called on our sheet to actually unmap
-//		the window.
-//
-//	REVISIONS:
-//		2004-05-18	witness	Documented.
-// -----------------------------------------------------------------------------
-
--(void) sheetDidEnd: (NSWindow*)sheet returnCode: (int)returnCode contextInfo: (void*)contextInfo
-{
-	[sheet orderOut: nil];
+	[_owner endSheet:goToPanel];
 }
 
 
@@ -88,9 +79,9 @@
 
 -(IBAction) goToLineOrChar:(id)sender
 {
-	int		num;
+	NSInteger		num;
 	
-	num = [lineNumField intValue];
+	num = [lineNumField integerValue];
 	
 	if( [lineCharChooser selectedRow] == 0 )
 		[targetDocument goToLine: num];

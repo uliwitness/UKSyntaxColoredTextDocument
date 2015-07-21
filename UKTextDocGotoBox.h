@@ -46,8 +46,8 @@
 // targetDocument must support this protocol:
 @protocol UKTextDocGoToBoxTarget
 
--(void) goToLine: (int)num;
--(void) goToCharacter: (int)num;
+-(void) goToLine: (NSUInteger)num;
+-(void) goToCharacter: (NSUInteger)num;
 
 @end
 
@@ -63,6 +63,8 @@
     IBOutlet NSTextField					*lineNumField;
     IBOutlet NSButton						*okayButton;
     IBOutlet id	<UKTextDocGoToBoxTarget>	targetDocument;		// Object whom we send goToLine or goToCharacter messages.
+	
+	NSWindow								*_owner;
 }
 
 // This is what you want to call:

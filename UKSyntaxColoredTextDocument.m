@@ -33,12 +33,6 @@
 -(void)	dealloc
 {
 	[syntaxColoringController setDelegate: nil];
-	[syntaxColoringController release];
-	syntaxColoringController = nil;
-	[sourceCode release];
-	sourceCode = nil;
-	
-	[super dealloc];
 }
 
 
@@ -75,7 +69,6 @@
 	if( sourceCode != nil )
 	{
 		[textView setString: sourceCode];
-		[sourceCode release];
 		sourceCode = nil;
 	}
 	
@@ -138,29 +131,24 @@
 
 
 /* -----------------------------------------------------------------------------
-	dataRepresentationOfType:
-		Save raw text to a file as MacRoman text.
+	dataOfType:error:
+		Save raw text to a file as stringEncoding text.
    -------------------------------------------------------------------------- */
 
--(NSData*)	dataRepresentationOfType: (NSString*)aType
+-(NSData*)	dataOfType: (NSString*)aType error: (NSError**)outError
 {
     return [[textView string] dataUsingEncoding: [self stringEncoding] allowLossyConversion: YES];
 }
 
 
 /* -----------------------------------------------------------------------------
-	loadDataRepresentation:ofType:
-		Load plain MacRoman text from a text file.
+	readFromData:ofType:error:
+		Load plain stringEncoding text from a text file.
    -------------------------------------------------------------------------- */
 
--(BOOL)	loadDataRepresentation: (NSData*)data ofType: (NSString*)aType
+-(BOOL)	readFromData: (NSData*)data ofType: (NSString*)aType error: (NSError **)outError
 {
 	// sourceCode is a member variable:
-	if( sourceCode )
-	{
-		[sourceCode release];   // Release any old text.
-		sourceCode = nil;
-	}
 	sourceCode = [[NSString alloc] initWithData:data encoding: [self stringEncoding]]; // Load the new text.
 	
 	/* Try to load it into textView and syntax colorize it: */
@@ -287,5 +275,28 @@
 {
 	[syntaxColoringController recolorCompleteFile: sender];
 }
+
+
+// -----------------------------------------------------------------------------
+//	goToLine:
+//		This selects the specified line of the document.
+// -----------------------------------------------------------------------------
+
+-(void)	goToLine: (NSUInteger)lineNum
+{
+	[syntaxColoringController goToLine: lineNum];
+}
+
+
+// -----------------------------------------------------------------------------
+//	goToCharacter:
+//		This selects the specified character in the document.
+// -----------------------------------------------------------------------------
+
+-(void)	goToCharacter: (NSUInteger)charNum
+{
+	[syntaxColoringController goToRangeFrom: charNum toChar: charNum +1];
+}
+
 
 @end
