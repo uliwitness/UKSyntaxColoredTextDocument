@@ -42,7 +42,9 @@
 
 -(IBAction) showGoToSheet: (NSWindow*)owner
 {
-	[[NSApplication sharedApplication] beginSheet:goToPanel modalForWindow:owner modalDelegate:self didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:) contextInfo:nil];
+	[owner beginSheet: goToPanel completionHandler:^(NSModalResponse returnCode) {
+		[self sheetDidEnd: goToPanel returnCode: returnCode contextInfo: nil];
+	}];
 }
 
 
@@ -70,7 +72,7 @@
 //		2004-05-18	witness	Documented.
 // -----------------------------------------------------------------------------
 
--(void) sheetDidEnd: (NSWindow*)sheet returnCode: (int)returnCode contextInfo: (void*)contextInfo
+-(void) sheetDidEnd: (NSWindow*)sheet returnCode: (NSModalResponse)returnCode contextInfo: (void*)contextInfo
 {
 	[sheet orderOut: nil];
 }
