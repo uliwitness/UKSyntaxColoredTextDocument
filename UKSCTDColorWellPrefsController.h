@@ -41,6 +41,9 @@
 #import <Cocoa/Cocoa.h>
 
 
+@class ULIFontPickerButton;
+
+
 // -----------------------------------------------------------------------------
 //  Class:
 // -----------------------------------------------------------------------------
@@ -55,6 +58,7 @@
 	IBOutlet NSColorWell*		identifiers2Color;
 	IBOutlet NSColorWell*		comments2Color;
 }
+@property (assign) IBOutlet ULIFontPickerButton *defaultFontButton;
 
 // Actions for NSColorWells:
 -(IBAction)		takeCommentsColorFrom: (NSColorWell*)cw;
@@ -64,6 +68,7 @@
 -(IBAction)		takeTagsColorFrom: (NSColorWell*)cw;
 -(IBAction)		takeIdentifiers2ColorFrom: (NSColorWell*)cw;
 -(IBAction)		takeComments2ColorFrom: (NSColorWell*)cw;
+-(IBAction)		takePickedFontFrom: (ULIFontPickerButton*)inSender;
 
 -(IBAction)		resetColors: (id)sender;	// For "reset to defaults" button.
 

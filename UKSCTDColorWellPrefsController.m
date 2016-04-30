@@ -32,6 +32,7 @@
 #import "UKSCTDColorWellPrefsController.h"
 #import "NSArray+Color.h"
 #import "UKSyntaxColoredTextViewController.h"
+#import "ULIFontPickerButton.h"
 
 
 @implementation UKSCTDColorWellPrefsController
@@ -61,35 +62,49 @@
 
 -(void) updateUIFromPrefs: (id)sender
 {
-	NSArray*	arr = [[NSUserDefaults standardUserDefaults] objectForKey: @"SyntaxColoring:Color:Comments"];
+	NSUserDefaults* standardUserDefaults = [NSUserDefaults standardUserDefaults];
+	NSArray*	arr = [standardUserDefaults objectForKey: @"SyntaxColoring:Color:Comments"];
 	if( arr )
 		[commentsColor setColor: [arr colorValue]];
 	
-	arr = [[NSUserDefaults standardUserDefaults] objectForKey: @"SyntaxColoring:Color:Identifiers"];
+	arr = [standardUserDefaults objectForKey: @"SyntaxColoring:Color:Identifiers"];
 	if( arr )
 		[identifiersColor setColor: [arr colorValue]];	
 	
-	arr = [[NSUserDefaults standardUserDefaults] objectForKey: @"SyntaxColoring:Color:Preprocessor"];
+	arr = [standardUserDefaults objectForKey: @"SyntaxColoring:Color:Preprocessor"];
 	if( arr )
 		[preprocessorColor setColor: [arr colorValue]];	
 
-	arr = [[NSUserDefaults standardUserDefaults] objectForKey: @"SyntaxColoring:Color:Strings"];
+	arr = [standardUserDefaults objectForKey: @"SyntaxColoring:Color:Strings"];
 	if( arr )
 		[stringsColor setColor: [arr colorValue]];	
 
-	arr = [[NSUserDefaults standardUserDefaults] objectForKey: @"SyntaxColoring:Color:Tags"];
+	arr = [standardUserDefaults objectForKey: @"SyntaxColoring:Color:Tags"];
 	if( arr )
 		[tagsColor setColor: [arr colorValue]];	
 
-	arr = [[NSUserDefaults standardUserDefaults] objectForKey: @"SyntaxColoring:Color:UserIdentifiers"];
+	arr = [standardUserDefaults objectForKey: @"SyntaxColoring:Color:UserIdentifiers"];
 	if( !arr )
-		arr = [[NSUserDefaults standardUserDefaults] objectForKey: @"SyntaxColoring:Color:Identifiers2"];
+		arr = [standardUserDefaults objectForKey: @"SyntaxColoring:Color:Identifiers2"];
 	if( arr )
 		[identifiers2Color setColor: [arr colorValue]];	
 
-	arr = [[NSUserDefaults standardUserDefaults] objectForKey: @"SyntaxColoring:Color:Comments2"];
+	arr = [standardUserDefaults objectForKey: @"SyntaxColoring:Color:Comments2"];
 	if( arr )
-		[comments2Color setColor: [arr colorValue]];	
+		[comments2Color setColor: [arr colorValue]];
+	
+	NSFont*         theFont = nil;
+	NSString*       fontName = [standardUserDefaults objectForKey: @"ULISyntaxColoringBaseFontName"];
+	NSNumber*       fontSize = [standardUserDefaults objectForKey: @"ULISyntaxColoringBaseFontSize"];
+	if( !fontSize || !fontName )
+	{
+		theFont = [NSFont userFixedPitchFontOfSize: 10.0];
+	}
+	else
+	{
+		theFont = [NSFont fontWithName: fontName size: fontSize.floatValue];
+	}
+	self.defaultFontButton.pickedFont = theFont;
 }
 
 
@@ -205,6 +220,18 @@
 	[[NSUserDefaults standardUserDefaults] setObject: theColor forKey: @"SyntaxColoring:Color:Comments2"];
 }
 
+-(IBAction)	takePickedFontFrom: (ULIFontPickerButton*)inSender
+{
+	NSUserDefaults* standardUserDefaults = [NSUserDefaults standardUserDefaults];
+	[standardUserDefaults setObject: inSender.pickedFont.fontName forKey: @"ULISyntaxColoringBaseFontName"];
+	[standardUserDefaults setFloat: inSender.pickedFont.pointSize forKey: @"ULISyntaxColoringBaseFontSize"];
+}
+
+
+-(NSUInteger) validModesForFontPanel: (NSFontPanel *)fontPanel
+{
+	return 0;
+}
 
 // -----------------------------------------------------------------------------
 //	resetColors:

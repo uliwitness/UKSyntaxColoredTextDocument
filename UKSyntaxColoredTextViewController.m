@@ -1362,7 +1362,19 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 -(NSDictionary*)	defaultTextAttributes
 {
-	return [NSDictionary dictionaryWithObjectsAndKeys: [NSFont userFixedPitchFontOfSize: 10.0], NSFontAttributeName, nil];
+	NSUserDefaults* standardUserDefaults = [NSUserDefaults standardUserDefaults];
+	NSFont*         theFont = nil;
+	NSString*       fontName = [standardUserDefaults objectForKey: @"ULISyntaxColoringBaseFontName"];
+	NSNumber*       fontSize = [standardUserDefaults objectForKey: @"ULISyntaxColoringBaseFontSize"];
+	if( !fontSize || !fontName )
+	{
+		theFont = [NSFont userFixedPitchFontOfSize: 10.0];
+	}
+	else
+	{
+		theFont = [NSFont fontWithName: fontName size: fontSize.floatValue];
+	}
+	return [NSDictionary dictionaryWithObjectsAndKeys: theFont, NSFontAttributeName, nil];
 }
 
 
