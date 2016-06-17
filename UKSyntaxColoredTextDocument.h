@@ -68,21 +68,3 @@
 @end
 
 
-
-// Support for external editor interface:
-//	(Doesn't really work yet ... *sigh*)
-
-#pragma options align=mac68k
-
-struct SelectionRange
-{
-	short   unused1;	// 0 (not used)
-	short   lineNum;	// line to select (< 0 to specify range)
-	long	startRange; // start of selection range (if line < 0)
-	long	endRange;   // end of selection range (if line < 0)
-	long	unused2;	// 0 (not used)
-	long	theDate;	// modification date/time
-};
-
-#pragma options align=reset
-

@@ -165,25 +165,6 @@
 	
 	/* Try to load it into textView and syntax colorize it: */
 	[textView setString: sourceCode];
-
-	// Try to get selection info if possible:
-	NSAppleEventDescriptor*  evt = [[NSAppleEventManager sharedAppleEventManager] currentAppleEvent];
-	if( evt )
-	{
-		NSAppleEventDescriptor*  param = [evt paramDescriptorForKeyword: keyAEPosition];
-		if( param )		// This is always false when Xcode calls us???
-		{
-			NSData*					data = [param data];
-			struct SelectionRange   range;
-			
-			memmove( &range, [data bytes], sizeof(range) );
-			
-			if( range.lineNum >= 0 )
-				[syntaxColoringController goToLine: range.lineNum +1];
-			else
-				[syntaxColoringController goToRangeFrom: range.startRange toChar: range.endRange];
-		}
-	}
 	
 	return YES;
 }
@@ -208,6 +189,18 @@
 -(IBAction)	toggleMaintainIndentation: (id)sender
 {
 	[syntaxColoringController toggleMaintainIndentation: sender];
+}
+
+
+-(void) goToLine: (int)num
+{
+	[syntaxColoringController goToLine: num];
+}
+
+
+-(void) goToCharacter: (int)num
+{
+	[syntaxColoringController goToCharacter: num];
 }
 
 
