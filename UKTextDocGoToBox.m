@@ -59,7 +59,7 @@
 
 -(IBAction) hideGoToSheet: (id)sender
 {
-	[[NSApplication sharedApplication] endSheet: goToPanel];
+	[goToPanel.sheetParent endSheet: goToPanel];
 }
 
 
