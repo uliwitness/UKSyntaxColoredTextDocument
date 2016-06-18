@@ -69,14 +69,24 @@
 		x--;
 	}
 	
-	[super insertNewline: sender];
+	[self.undoManager beginUndoGrouping];
+	NSRange		newlineAndSpacesRange = self.selectedRange;
+	newlineAndSpacesRange.length = 1;
+	NSRange		replacementRange = self.selectedRange;
+	[self insertText: @"\n" replacementRange: replacementRange];
+	replacementRange.location += newlineAndSpacesRange.length;
+	replacementRange.length = 0;
 	if( hadSpaces )
 	{
 		spacesRange.location = prevLineBreak;
 		spacesRange.length = lastSpace -prevLineBreak +1;
 		if( spacesRange.length > 0 )
-			[self insertText: [tsString substringWithRange:spacesRange]];
+		{
+			newlineAndSpacesRange.length += spacesRange.length;
+			[self insertText: [tsString substringWithRange:spacesRange] replacementRange: replacementRange];
+		}
 	}
+	[self.undoManager endUndoGrouping];
 }
 
 @end
