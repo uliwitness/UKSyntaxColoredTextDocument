@@ -92,8 +92,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	
-	DESTROY_DEALLOC(replacementString);
-	
 	[super dealloc];
 }
 
@@ -236,90 +234,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		
 		// Actually recolor the changed part:
 		[self recolorRange: currRange];
-	}
-}
-
-
-// -----------------------------------------------------------------------------
-//	textView:shouldChangeTextinRange:replacementString:
-//		Perform indentation-maintaining if we're supposed to.
-// -----------------------------------------------------------------------------
-
--(BOOL) textView:(NSTextView *)tv shouldChangeTextInRange:(NSRange)afcr replacementString:(NSString *)rps
-{
-	if( maintainIndentation )
-	{
-		affectedCharRange = afcr;
-		if( replacementString )
-		{
-			[replacementString release];
-			replacementString = nil;
-		}
-		replacementString = [rps retain];
-		
-		[self performSelector: @selector(didChangeText) withObject: nil afterDelay: 0.0];	// Queue this up on the event loop. If we change the text here, we only confuse the undo stack.
-	}
-	
-	return YES;
-}
-
-
--(void)	didChangeText	// This actually does what we want to do in textView:shouldChangeTextInRange:
-{
-	if( maintainIndentation && replacementString && ([replacementString isEqualToString:@"\n"]
-		|| [replacementString isEqualToString:@"\r"]) )
-	{
-		NSMutableAttributedString*  textStore = [TEXTVIEW textStorage];
-		BOOL						hadSpaces = NO;
-		NSUInteger					lastSpace = affectedCharRange.location,
-									prevLineBreak = 0;
-		NSRange						spacesRange = { 0, 0 };
-		unichar						theChar = 0;
-		NSUInteger					x = (affectedCharRange.location == 0) ? 0 : affectedCharRange.location -1;
-		NSString*					tsString = [textStore string];
-		
-		while( YES )
-		{
-			if( x > ([tsString length] -1) )
-				break;
-			
-			theChar = [tsString characterAtIndex: x];
-			
-			switch( theChar )
-			{
-				case '\n':
-				case '\r':
-					prevLineBreak = x +1;
-					x = 0;  // Terminate the loop.
-					break;
-				
-				case ' ':
-				case '\t':
-					if( !hadSpaces )
-					{
-						lastSpace = x;
-						hadSpaces = YES;
-					}
-					break;
-				
-				default:
-					hadSpaces = NO;
-					break;
-			}
-			
-			if( x == 0 )
-				break;
-			
-			x--;
-		}
-		
-		if( hadSpaces )
-		{
-			spacesRange.location = prevLineBreak;
-			spacesRange.length = lastSpace -prevLineBreak +1;
-			if( spacesRange.length > 0 )
-				[TEXTVIEW insertText: [tsString substringWithRange:spacesRange]];
-		}
 	}
 }
 

@@ -73,8 +73,6 @@
 	BOOL								maintainIndentation;	// Keep new lines indented at same depth as their predecessor?
 	id									reserved;
 	BOOL								syntaxColoringBusy;		// Set while recolorRange is busy, so we don't recursively call recolorRange.
-	NSRange								affectedCharRange;
-	NSString*							replacementString;
 	IBOutlet id<UKSyntaxColoredTextViewDelegate>	delegate;
 }
 
