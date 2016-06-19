@@ -113,12 +113,12 @@
 -(void)	colorOneLineComment: (NSString*) startCh inString: (NSMutableAttributedString*) s
 				withColor: (NSColor*) col andMode:(NSString*)attr;
 -(void)	colorCommentsFrom: (NSString*) startCh to: (NSString*) endCh inString: (NSMutableAttributedString*) s
-				withColor: (NSColor*) col andMode:(NSString*)attr;
+				withColor: (NSColor*) col andMode:(NSString*)attr useAttachment: (BOOL)useAttachment;
 -(void)	colorIdentifier: (NSString*) ident inString: (NSMutableAttributedString*) s
-				withColor: (NSColor*) col andMode:(NSString*)attr charset: (NSCharacterSet*)cset;
+				withColor: (NSColor*) col andMode:(NSString*)attr charset: (NSCharacterSet*)cset useAttachment: (BOOL)useAttachment;
 -(void)	colorStringsFrom: (NSString*) startCh to: (NSString*) endCh inString: (NSMutableAttributedString*) s
 				withColor: (NSColor*) col andMode:(NSString*)attr andEscapeChar: (NSString*)vStringEscapeCharacter;
 -(void)	colorTagFrom: (NSString*) startCh to: (NSString*)endCh inString: (NSMutableAttributedString*) s
-				withColor: (NSColor*) col andMode:(NSString*)attr exceptIfMode: (NSString*)ignoreAttr;
+				withColor: (NSColor*) col andMode:(NSString*)attr useAttachment: (BOOL)useAttachment exceptIfMode: (NSString*)ignoreAttr;
 
 @end

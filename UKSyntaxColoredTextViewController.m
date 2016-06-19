@@ -33,6 +33,7 @@
 #import "NSArray+Color.h"
 #import "NSScanner+SkipUpToCharset.h"
 #import "UKHelperMacros.h"
+#import "ULISyntaxColoredTextView.h"
 
 
 // -----------------------------------------------------------------------------
@@ -46,7 +47,57 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 //	Macros:
 // -----------------------------------------------------------------------------
 
-#define	TEXTVIEW		((NSTextView*)[self view])
+#define	TEXTVIEW		((ULISyntaxColoredTextView*)[self view])
+
+
+@interface ULISyntaxColoredTextCapsuleAttachmentCell : NSTextAttachmentCell
+
+@end
+
+@implementation ULISyntaxColoredTextCapsuleAttachmentCell
+
+- (void)drawWithFrame:(NSRect)cellFrame inView:(nullable NSView *)controlView
+{
+	[self.image drawInRect: cellFrame];
+}
+
+
+- (NSSize)cellSize
+{
+	return NSMakeSize(32,32);
+}
+
+@end
+
+
+@interface ULISyntaxColoredTextCapsuleAttachment : NSTextAttachment
+
+@property (copy) NSString*	stringRepresentation;
+
+@end
+
+
+@implementation ULISyntaxColoredTextCapsuleAttachment
+
+-(instancetype)	initWithData:(NSData *)contentData ofType:(NSString *)uti
+{
+	self = [super initWithData: [[NSImage imageNamed: NSImageNameApplicationIcon] TIFFRepresentation] ofType: uti];
+	if( self )
+	{
+		self.image = [NSImage imageNamed: NSImageNameApplicationIcon];
+		self.attachmentCell = [[[ULISyntaxColoredTextCapsuleAttachmentCell alloc] initTextCell: @"HEY!"] autorelease];
+		self.attachmentCell.attachment = self;
+	}
+	return self;
+}
+
+-(void)	dealloc
+{
+	DESTROY_DEALLOC(_stringRepresentation);
+	[super dealloc];
+}
+
+@end
 
 
 @implementation UKSyntaxColoredTextViewController
@@ -758,7 +809,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			NSString*   vComponentType = [vCurrComponent objectForKey: @"Type"];
 			NSString*   vComponentName = [vCurrComponent objectForKey: @"Name"];
 			NSString*   vColorKeyName = [@"SyntaxColoring:Color:" stringByAppendingString: vComponentName];
+			NSString*	vComponentStyle = [vCurrComponent objectForKey: @"Style"];
 			NSColor*	vColor = [[vPrefs arrayForKey: vColorKeyName] colorValue];
+			BOOL		useAttachment = ( vComponentStyle && [vComponentStyle isEqualToString: @"Capsule"] );
 			
 			if( !vColor )
 				vColor = [[vCurrComponent objectForKey: @"Color"] colorValue];
@@ -767,7 +820,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			{
 				[self colorCommentsFrom: [vCurrComponent objectForKey: @"Start"]
 						to: [vCurrComponent objectForKey: @"End"] inString: vString
-						withColor: vColor andMode: vComponentName];
+						withColor: vColor andMode: vComponentName useAttachment: useAttachment];
 			}
 			else if( [vComponentType isEqualToString: @"OneLineComment"] )
 			{
@@ -785,7 +838,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			{
 				[self colorTagFrom: [vCurrComponent objectForKey: @"Start"]
 						to: [vCurrComponent objectForKey: @"End"] inString: vString
-						withColor: vColor andMode: vComponentName
+						withColor: vColor andMode: vComponentName useAttachment: useAttachment
 						exceptIfMode: [vCurrComponent objectForKey: @"IgnoredComponent"]];
 			}
 			else if( [vComponentType isEqualToString: @"Keywords"] )
@@ -807,8 +860,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 					
 					NSEnumerator*	vItty = [vIdents objectEnumerator];
 					while( vCurrIdent = [vItty nextObject] )
-						[self colorIdentifier: vCurrIdent inString: vString withColor: vColor
-									andMode: vComponentName charset: vIdentCharset];
+					{
+						[self colorIdentifier: vCurrIdent inString: vString withColor: vColor andMode: vComponentName charset: vIdentCharset useAttachment: useAttachment];
+					}
 				}
 			}
 		}
@@ -816,6 +870,26 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		// Replace the range with our recolored part:
 		[[TEXTVIEW textStorage] replaceCharactersInRange: range withAttributedString: vString];
 		[[TEXTVIEW textStorage] fixFontAttributeInRange: range];	// Make sure Japanese etc. fallback fonts get applied.
+		
+		#if CAPSULE_SUPPORT
+		NSRange							effectiveRange = {0,0};
+		NSUInteger						idx = 0;
+		NSMutableAttributedString	*	s = [TEXTVIEW textStorage];
+		while( idx < s.length )
+		{
+			ULISyntaxColoredTextCapsuleAttachment*	currAttachment = [s attribute: NSAttachmentAttributeName atIndex: idx effectiveRange: &effectiveRange];
+			if( !currAttachment )
+			{
+				idx++;
+				continue;
+			}
+			
+			NSAttributedString	*	attrStr = [NSAttributedString attributedStringWithAttachment: currAttachment];
+			[s replaceCharactersInRange: effectiveRange withAttributedString: attrStr];
+			
+			idx = effectiveRange.location +effectiveRange.length;
+		}
+		#endif /*CAPSULE_SUPPORT*/
 	}
 	@finally
 	{
@@ -1053,13 +1127,13 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 // -----------------------------------------------------------------------------
 
 -(void)	colorCommentsFrom: (NSString*) startCh to: (NSString*) endCh inString: (NSMutableAttributedString*) s
-							withColor: (NSColor*) col andMode:(NSString*)attr
+							withColor: (NSColor*) col andMode:(NSString*)attr useAttachment: (BOOL)useAttachment
 {
 	@try
 	{
-		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*		vStyles = [self textAttributesForComponentName: attr color: col];
-		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
+		NSScanner*				vScanner = [NSScanner scannerWithString: [s string]];
+		NSMutableDictionary*	vStyles = [[[self textAttributesForComponentName: attr color: col] mutableCopy] autorelease];
+		BOOL					vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		while( ![vScanner isAtEnd] )
 		{
@@ -1143,14 +1217,14 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 // -----------------------------------------------------------------------------
 
 -(void)	colorIdentifier: (NSString*) ident inString: (NSMutableAttributedString*) s
-			withColor: (NSColor*) col andMode:(NSString*)attr charset: (NSCharacterSet*)cset
+			withColor: (NSColor*) col andMode:(NSString*)attr charset: (NSCharacterSet*)cset useAttachment: (BOOL)useAttachment
 {
 	@try
 	{
-		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*		vStyles = [self textAttributesForComponentName: attr color: col];
-		NSUInteger			vStartOffs = 0;
-		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
+		NSScanner*				vScanner = [NSScanner scannerWithString: [s string]];
+		NSMutableDictionary*	vStyles = [[[self textAttributesForComponentName: attr color: col] mutableCopy] autorelease];
+		NSUInteger				vStartOffs = 0;
+		BOOL					vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		// Skip any leading whitespace chars, somehow NSScanner doesn't do that:
 		if( cset )
@@ -1188,6 +1262,17 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			}
 			
 			// Now mess with the string's styles:
+			#if CAPSULE_SUPPORT
+			if( useAttachment )
+			{
+				ULISyntaxColoredTextCapsuleAttachment*	att = nil;
+				att = [[ULISyntaxColoredTextCapsuleAttachment alloc] initWithData: nil ofType: (NSString*)kUTTypePlainText];
+				att.stringRepresentation = [s.string substringWithRange: NSMakeRange( vStartOffs, [ident length] )];
+				[vStyles setObject: att forKey: NSAttachmentAttributeName];
+				[att release];
+			}
+			#endif /*CAPSULE_SUPPORT*/
+
 			[s setAttributes: vStyles range: NSMakeRange( vStartOffs, [ident length] )];
 				
 			if( vDelegateHandlesProgress )
@@ -1207,13 +1292,15 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 // -----------------------------------------------------------------------------
 
 -(void)	colorTagFrom: (NSString*) startCh to: (NSString*)endCh inString: (NSMutableAttributedString*) s
-				withColor: (NSColor*) col andMode:(NSString*)attr exceptIfMode: (NSString*)ignoreAttr
+				withColor: (NSColor*) col andMode:(NSString*)attr useAttachment: (BOOL)useAttachment
+				exceptIfMode: (NSString*)ignoreAttr
 {
 	@try
 	{
-		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
-		NSDictionary*		vStyles = [self textAttributesForComponentName: attr color: col];
-		BOOL				vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
+		NSScanner*				vScanner = [NSScanner scannerWithString: [s string]];
+		vScanner.charactersToBeSkipped = nil;
+		NSMutableDictionary*	vStyles = [[[self textAttributesForComponentName: attr color: col] mutableCopy] autorelease];
+		BOOL					vDelegateHandlesProgress = [delegate respondsToSelector: @selector(textViewControllerProgressedWhileSyntaxRecoloring:)];
 		
 		while( ![vScanner isAtEnd] )
 		{
@@ -1234,6 +1321,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 				continue;
 
 			// Look for matching end marker:
+			BOOL		foundEnd = NO;
 			while( ![vScanner isAtEnd] )
 			{
 				// Scan up to the next occurence of the terminating sequence:
@@ -1246,6 +1334,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 				{
 					scMode = [[s attributesAtIndex:vEndOffs effectiveRange: nil] objectForKey: TD_SYNTAX_COLORING_MODE_ATTR];
 					[vScanner scanString: endCh intoString: nil];   // Also skip the terminating sequence.
+					foundEnd = YES;
 					if( ignoreAttr == nil || ![scMode isEqualToString: ignoreAttr] )
 						break;
 				}
@@ -1253,12 +1342,25 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 				// Otherwise we keep going, look for the next occurence of endCh and hope it isn't in that style.
 			}
 			
+			if( !foundEnd )
+				break;
 			vEndOffs = [vScanner scanLocation];
 			
 			if( vDelegateHandlesProgress )
 				[delegate textViewControllerProgressedWhileSyntaxRecoloring: self];
 			
 			// Now mess with the string's styles:
+			#if CAPSULE_SUPPORT
+			if( useAttachment )
+			{
+				ULISyntaxColoredTextCapsuleAttachment*	att = nil;
+				att = [[ULISyntaxColoredTextCapsuleAttachment alloc] initWithData: nil ofType: (NSString*)kUTTypeImage];
+				att.stringRepresentation = [s.string substringWithRange: NSMakeRange( vStartOffs, vEndOffs -vStartOffs )];
+				[vStyles setObject: att forKey: NSAttachmentAttributeName];
+				[att release];
+			}
+			#endif /*CAPSULE_SUPPORT*/
+			
 			[s setAttributes: vStyles range: NSMakeRange( vStartOffs, vEndOffs -vStartOffs )];
 		}
 	}

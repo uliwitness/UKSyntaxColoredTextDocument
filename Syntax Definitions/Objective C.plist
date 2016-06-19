@@ -207,6 +207,26 @@
 			<key>Type</key>
 			<string>BlockComment</string>
 		</dict>
+		<dict>
+			<key>Color</key>
+			<array>
+				<integer>0</integer>
+				<integer>0</integer>
+				<integer>1</integer>
+			</array>
+			<key>End</key>
+			<string>#&gt;</string>
+			<key>IgnoredComponent</key>
+			<string>Strings</string>
+			<key>Name</key>
+			<string>Tags</string>
+			<key>Start</key>
+			<string>&lt;#</string>
+			<key>Type</key>
+			<string>Tag</string>
+			<key>Style</key>
+			<string>Capsule</string>
+		</dict>
 	</array>
 	<key>FileNameSuffixes</key>
 	<array>
