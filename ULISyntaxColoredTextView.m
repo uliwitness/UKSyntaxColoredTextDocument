@@ -12,6 +12,34 @@
 
 @implementation ULISyntaxColoredTextView
 
+-(void) keyDown:(NSEvent *)event
+{
+	NSString * pressedChars = [event charactersIgnoringModifiers];
+	if( pressedChars.length == 0 )
+	{
+		[super keyDown: event];
+		return;
+	}
+	unichar theCh = [pressedChars characterAtIndex: 0];
+	if( theCh == 0x03 )	// Enter key.
+	{
+		id<ULISyntaxColoredTextViewDelegate>	theDelegate = (id<ULISyntaxColoredTextViewDelegate>)self.delegate;
+		if( [theDelegate respondsToSelector: @selector(syntaxColoredTextViewHandleEnterKey:)] )
+		{
+
+			if( [theDelegate respondsToSelector: @selector(syntaxColoredTextViewShouldHandleEnterKey:)]
+				&& [theDelegate syntaxColoredTextViewShouldHandleEnterKey: self] )
+			{
+				[theDelegate syntaxColoredTextViewHandleEnterKey: self];
+				return;
+			}
+		}
+	}
+
+	[super keyDown: event];
+}
+
+
 -(void)	insertNewline:(id)sender
 {
 	if( ![(UKSyntaxColoredTextViewController*)self.delegate maintainIndentation] )
