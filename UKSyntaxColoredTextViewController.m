@@ -1303,4 +1303,29 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	return NSMakeRange(0,0);
 }
 
+
+// -----------------------------------------------------------------------------
+//	syntaxColoredTextViewShouldHandleEnterKey:
+//		Should we forward "enter" key presses (i.e. the one in the lower right
+//		on the numpad, not just the "return" key) to our delegate?
+// -----------------------------------------------------------------------------
+
+-(BOOL)	syntaxColoredTextViewShouldHandleEnterKey: (ULISyntaxColoredTextView*)sender
+{
+	return [self.delegate respondsToSelector: @selector(textViewControllerHandleEnterKey:)];
+}
+
+
+// -----------------------------------------------------------------------------
+//	syntaxColoredTextViewHandleEnterKey:
+//		Forward "enter" key presses (i.e. the one in the lower right
+//		on the numpad, not just the "return" key) to our delegate because it
+//		signalled it's interested in this keypress by implementing the selector.
+// -----------------------------------------------------------------------------
+
+-(void) syntaxColoredTextViewHandleEnterKey:(ULISyntaxColoredTextView *)sender
+{
+	[self.delegate textViewControllerHandleEnterKey: self];
+}
+
 @end

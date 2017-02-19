@@ -30,6 +30,7 @@
 // -----------------------------------------------------------------------------
 
 #import <Cocoa/Cocoa.h>
+#import "ULISyntaxColoredTextView.h"
 
 
 // -----------------------------------------------------------------------------
@@ -59,6 +60,8 @@
 -(NSArray*)			userIdentifiersForKeywordComponentName: (NSString*)inModeName;	// If you can parse your code & provide a list of identifiers the user uses, you can provide this method to tell the editor about them.
 -(NSDictionary*)	textAttributesForComponentName: (NSString*)inModeName color: (NSColor*)inColor;	// If you don't just want a color, provide an NSAttributedString attributes dictionary here.
 
+-(void) textViewControllerHandleEnterKey: (UKSyntaxColoredTextViewController*)sender;
+
 @end
 
 
@@ -67,7 +70,7 @@
 //	Class:
 // -----------------------------------------------------------------------------
 
-@interface UKSyntaxColoredTextViewController : NSViewController <NSTextViewDelegate>
+@interface UKSyntaxColoredTextViewController : NSViewController <ULISyntaxColoredTextViewDelegate>
 {
 	BOOL								autoSyntaxColoring;		// Automatically refresh syntax coloring when text is changed?
 	BOOL								maintainIndentation;	// Keep new lines indented at same depth as their predecessor?
