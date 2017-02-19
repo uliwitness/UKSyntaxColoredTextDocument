@@ -61,6 +61,7 @@
 -(NSDictionary*)	textAttributesForComponentName: (NSString*)inModeName color: (NSColor*)inColor;	// If you don't just want a color, provide an NSAttributedString attributes dictionary here.
 
 -(void) textViewControllerHandleEnterKey: (UKSyntaxColoredTextViewController*)sender;
+-(void) textViewControllerTextDidChange: (UKSyntaxColoredTextViewController*)sender;
 
 @end
 

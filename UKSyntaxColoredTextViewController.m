@@ -286,6 +286,9 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		// Actually recolor the changed part:
 		[self recolorRange: currRange];
 	}
+	
+	if( [self.delegate respondsToSelector: @selector(textViewControllerTextDidChange:)] )
+		[self.delegate textViewControllerTextDidChange: self ];
 }
 
 
