@@ -8,11 +8,18 @@
 
 #import "ULISyntaxColoredTextView.h"
 #import "UKSyntaxColoredTextViewController.h"
+#import <QuartzCore/QuartzCore.h>
+
+
+#define INSERTION_INDICATOR_SIZE		5
+#define INSERTION_INDICATOR_LINE_WIDTH	2
+#define HALF_INSERTION_INDICATOR		((int)INSERTION_INDICATOR_SIZE / 2)
 
 
 @interface ULISyntaxColoredTextView	()
 {
-	NSRange _rangeForUserTextChangeOverride;
+	NSRange			_rangeForUserTextChangeOverride;
+	CAShapeLayer *	_lineInsertionIndicatorLayer;
 }
 
 @end
@@ -190,15 +197,69 @@
 	if( [self.customSnippetPasteboardType isEqualToString: type] && self.customSnippetsInsertionGranularity == NSSelectByParagraph )
 	{
 		NSPoint pos = dragInfo.draggingLocation;
-		
-		CGFloat		insertionMarkFraction = 0;
-		pos.x = 4;
 		pos.y = self.bounds.size.height -pos.y;
-		NSUInteger	charIndex = [self.layoutManager characterIndexForPoint: pos inTextContainer: self.textContainer fractionOfDistanceBetweenInsertionPoints: &insertionMarkFraction];
-
-		_rangeForUserTextChangeOverride = NSMakeRange(charIndex,0);
 		
-		return NSDragOperationCopy;
+		NSRect	usedBox = [self.layoutManager boundingRectForGlyphRange: NSMakeRange(0,FLT_MAX) inTextContainer: self.textContainer];
+		
+		NSRect		lineFragmentBox = {};
+		if( NSPointInRect(pos,usedBox) )
+		{
+			CGFloat		insertionMarkFraction = 0;
+			pos.x = 4;
+			NSUInteger	charIndex = [self.layoutManager characterIndexForPoint: pos inTextContainer: self.textContainer fractionOfDistanceBetweenInsertionPoints: &insertionMarkFraction];
+			NSUInteger	theGlyphIdx = [self.layoutManager glyphIndexForCharacterAtIndex: charIndex];
+			NSRange		effectiveRange = { 0, 0 };
+			lineFragmentBox = [self.layoutManager lineFragmentRectForGlyphAtIndex:theGlyphIdx effectiveRange: &effectiveRange];
+			
+			_rangeForUserTextChangeOverride = NSMakeRange(charIndex,0);
+		}
+		else
+		{
+			_rangeForUserTextChangeOverride = NSMakeRange(self.textStorage.length, 0);
+			lineFragmentBox = usedBox;
+			lineFragmentBox.origin.y += usedBox.size.height;
+			usedBox.size.height = 0;
+		}
+		
+		if( [self.delegate respondsToSelector: @selector(syntaxColoredTextView:willInsertSnippetInRange:)] )
+		{
+			[(id<ULISyntaxColoredTextViewDelegate>)self.delegate syntaxColoredTextView: self willInsertSnippetInRange: &_rangeForUserTextChangeOverride];
+		}
+		
+		if( _rangeForUserTextChangeOverride.location == NSNotFound )
+		{
+			[_lineInsertionIndicatorLayer removeFromSuperlayer];
+			_lineInsertionIndicatorLayer = nil;
+		}
+		else if( !_lineInsertionIndicatorLayer )
+		{
+			_lineInsertionIndicatorLayer = [CAShapeLayer layer];
+			CGMutablePathRef insertionIndicatorPath = CGPathCreateMutable();
+			CGPathAddEllipseInRect( insertionIndicatorPath, NULL, CGRectMake(0,0,INSERTION_INDICATOR_SIZE,INSERTION_INDICATOR_SIZE) );
+			CGPathMoveToPoint( insertionIndicatorPath, NULL, INSERTION_INDICATOR_SIZE, ((int)INSERTION_INDICATOR_SIZE / 2) );
+			CGPathAddLineToPoint( insertionIndicatorPath, NULL, 132, HALF_INSERTION_INDICATOR );
+			_lineInsertionIndicatorLayer.lineWidth = 2;
+			_lineInsertionIndicatorLayer.lineCap = kCALineCapRound;
+			_lineInsertionIndicatorLayer.anchorPoint = NSMakePoint(0,0.5);
+			_lineInsertionIndicatorLayer.strokeColor = [NSColor blueColor].CGColor;
+			_lineInsertionIndicatorLayer.fillColor = nil;
+			_lineInsertionIndicatorLayer.path = insertionIndicatorPath;
+			[self.layer addSublayer: _lineInsertionIndicatorLayer];
+		}
+		
+		if( _lineInsertionIndicatorLayer )
+		{
+			[CATransaction begin];
+			[CATransaction setDisableActions: YES];
+				_lineInsertionIndicatorLayer.position = NSMakePoint(((int)INSERTION_INDICATOR_LINE_WIDTH / 2),NSMinY(lineFragmentBox) -HALF_INSERTION_INDICATOR);
+			[CATransaction commit];
+			
+			return NSDragOperationCopy;
+		}
+		else
+		{
+			return NSDragOperationNone;
+		}
 	}
 	else
 	{
@@ -211,7 +272,15 @@
 	if( [self.customSnippetPasteboardType isEqualToString: type] )
 	{
 		[self.undoManager beginUndoGrouping];
-		NSString * theString = [pboard stringForType: self.customSnippetPasteboardType];
+		NSString * theString = nil;
+		if( [self.delegate respondsToSelector: @selector(syntaxColoredTextView:willInsertSnippetInRange:)] )
+		{
+			theString = [(id<ULISyntaxColoredTextViewDelegate>)self.delegate syntaxColoredTextView: self stringForSnippedOnPasteboard: pboard];
+		}
+		else
+		{
+			theString = [pboard stringForType: self.customSnippetPasteboardType];
+		}
 		NSRange selectedRange = self.rangeForUserTextChange;
 		[self insertText: theString replacementRange: selectedRange];
 		[self.undoManager endUndoGrouping];
@@ -231,6 +300,8 @@
 {
 	[super cleanUpAfterDragOperation];
 	
+	[_lineInsertionIndicatorLayer removeFromSuperlayer];
+	_lineInsertionIndicatorLayer = nil;
 	_rangeForUserTextChangeOverride = NSMakeRange(NSNotFound,0);
 }
 
