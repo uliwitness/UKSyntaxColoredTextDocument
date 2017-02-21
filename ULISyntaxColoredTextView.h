@@ -11,6 +11,9 @@
 
 @interface ULISyntaxColoredTextView : NSTextView
 
+@property (retain) IBInspectable NSString * customSnippetPasteboardType;
+@property IBInspectable NSSelectionGranularity customSnippetsInsertionGranularity;	// Set to NSSelectByParagraph to only allow dropping at a line start, NSSelectByCharacter for normal behaviour.
+
 @end
 
 

@@ -10,7 +10,39 @@
 #import "UKSyntaxColoredTextViewController.h"
 
 
+@interface ULISyntaxColoredTextView	()
+{
+	NSRange _rangeForUserTextChangeOverride;
+}
+
+@end
+
+
 @implementation ULISyntaxColoredTextView
+
+-(instancetype) initWithCoder: (NSCoder *)coder
+{
+	self = [super initWithCoder: coder];
+	if( self )
+	{
+		_rangeForUserTextChangeOverride.location = NSNotFound;
+	}
+	
+	return self;
+}
+
+
+-(instancetype) initWithFrame: (NSRect)frameRect
+{
+	self = [super initWithFrame: frameRect];
+	if( self )
+	{
+		_rangeForUserTextChangeOverride.location = NSNotFound;
+	}
+	
+	return self;
+}
+
 
 -(void) keyDown:(NSEvent *)event
 {
@@ -115,6 +147,91 @@
 		}
 	}
 	[self.undoManager endUndoGrouping];
+}
+
+
+-(NSArray<NSString*>*) readablePasteboardTypes
+{
+	if( self.customSnippetPasteboardType == nil )
+	{
+		return [super readablePasteboardTypes];
+	}
+	else
+	{
+		return [[NSArray arrayWithObject: self.customSnippetPasteboardType] arrayByAddingObjectsFromArray: [super readablePasteboardTypes]];
+	}
+}
+
+
+-(NSArray<NSString*>*) acceptableDragTypes
+{
+	if( self.customSnippetPasteboardType == nil )
+	{
+		return [super acceptableDragTypes];
+	}
+	else
+	{
+		return [[NSArray arrayWithObject: self.customSnippetPasteboardType] arrayByAddingObjectsFromArray: [super acceptableDragTypes]];
+	}
+}
+
+
+-(NSRange) rangeForUserTextChange
+{
+	if( _rangeForUserTextChangeOverride.location == NSNotFound )
+		return [super rangeForUserTextChange];
+	else
+		return _rangeForUserTextChangeOverride;
+}
+
+
+-(NSDragOperation)	dragOperationForDraggingInfo: (id <NSDraggingInfo>)dragInfo type: (NSString *)type
+{
+	if( [self.customSnippetPasteboardType isEqualToString: type] && self.customSnippetsInsertionGranularity == NSSelectByParagraph )
+	{
+		NSPoint pos = dragInfo.draggingLocation;
+		
+		CGFloat		insertionMarkFraction = 0;
+		pos.x = 4;
+		pos.y = self.bounds.size.height -pos.y;
+		NSUInteger	charIndex = [self.layoutManager characterIndexForPoint: pos inTextContainer: self.textContainer fractionOfDistanceBetweenInsertionPoints: &insertionMarkFraction];
+
+		_rangeForUserTextChangeOverride = NSMakeRange(charIndex,0);
+		
+		return NSDragOperationCopy;
+	}
+	else
+	{
+		return [super dragOperationForDraggingInfo: dragInfo type: type];
+	}
+}
+
+-(BOOL)	readSelectionFromPasteboard: (NSPasteboard *)pboard type: (NSString *)type
+{
+	if( [self.customSnippetPasteboardType isEqualToString: type] )
+	{
+		[self.undoManager beginUndoGrouping];
+		NSString * theString = [pboard stringForType: self.customSnippetPasteboardType];
+		NSRange selectedRange = self.rangeForUserTextChange;
+		[self insertText: theString replacementRange: selectedRange];
+		[self.undoManager endUndoGrouping];
+		
+		_rangeForUserTextChangeOverride = NSMakeRange(NSNotFound,0);
+		
+		return YES;
+	}
+	else
+	{
+		return [super readSelectionFromPasteboard: pboard type: type];
+	}
+}
+
+
+-(void) cleanUpAfterDragOperation
+{
+	[super cleanUpAfterDragOperation];
+	
+	_rangeForUserTextChangeOverride = NSMakeRange(NSNotFound,0);
 }
 
 @end
