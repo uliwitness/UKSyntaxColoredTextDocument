@@ -223,7 +223,15 @@
 		
 		if( [self.delegate respondsToSelector: @selector(syntaxColoredTextView:willInsertSnippetInRange:)] )
 		{
+			NSRange oldRange = _rangeForUserTextChangeOverride;
 			[(id<ULISyntaxColoredTextViewDelegate>)self.delegate syntaxColoredTextView: self willInsertSnippetInRange: &_rangeForUserTextChangeOverride];
+			if( (oldRange.location != _rangeForUserTextChangeOverride.location)
+				|| (oldRange.length != _rangeForUserTextChangeOverride.length) )
+			{
+				NSUInteger	theGlyphIdx = [self.layoutManager glyphIndexForCharacterAtIndex: _rangeForUserTextChangeOverride.location];
+				NSRange		effectiveRange = { 0, 0 };
+				lineFragmentBox = [self.layoutManager lineFragmentRectForGlyphAtIndex:theGlyphIdx effectiveRange: &effectiveRange];
+			}
 		}
 		
 		if( _rangeForUserTextChangeOverride.location == NSNotFound )
@@ -275,7 +283,7 @@
 		NSString * theString = nil;
 		if( [self.delegate respondsToSelector: @selector(syntaxColoredTextView:willInsertSnippetInRange:)] )
 		{
-			theString = [(id<ULISyntaxColoredTextViewDelegate>)self.delegate syntaxColoredTextView: self stringForSnippedOnPasteboard: pboard];
+			theString = [(id<ULISyntaxColoredTextViewDelegate>)self.delegate syntaxColoredTextView: self stringForSnippetOnPasteboard: pboard];
 		}
 		else
 		{

@@ -357,12 +357,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 }
 
 
-// -----------------------------------------------------------------------------
-//	goToLine:
-//		This selects the specified line of the document.
-// -----------------------------------------------------------------------------
-
--(void)	goToLine: (NSUInteger)lineNum
+-(NSRange) rangeForLine: (NSUInteger)lineNum
 {
 	NSRange			theRange = { 0, 0 };
 	NSString*		vString = [TEXTVIEW string];
@@ -400,6 +395,18 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		lastBreakChar = theCh;
 	}
 	
+	return theRange;
+}
+
+
+// -----------------------------------------------------------------------------
+//	goToLine:
+//		This selects the specified line of the document.
+// -----------------------------------------------------------------------------
+
+-(void)	goToLine: (NSUInteger)lineNum
+{
+	NSRange theRange = [self rangeForLine: lineNum];
 	[TEXTVIEW scrollRangeToVisible: theRange];
 	[TEXTVIEW setSelectedRange: theRange];
 }
@@ -902,6 +909,41 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		[self textView: TEXTVIEW willChangeSelectionFromCharacterRange: [TEXTVIEW selectedRange]
 					toCharacterRange: [TEXTVIEW selectedRange]];
 	}
+}
+
+
+-(NSUInteger) lineAtOffset: (NSUInteger)startCh
+{
+	NSUInteger		lineNo = 0,
+					x = 0;
+	unichar			lastBreakChar = 0;
+	NSUInteger		lastBreakOffs = 0;
+	NSTextView	*	theTextView = TEXTVIEW;
+
+	// Calc line number:
+	for( x = 0; (x < startCh) && (x < [[theTextView string] length]); x++ )
+	{
+		unichar		theCh = [[theTextView string] characterAtIndex: x];
+		switch( theCh )
+		{
+			case '\n':
+				if( lastBreakOffs == (x-1) && lastBreakChar == '\r' )   // LF in CRLF sequence? Treat this as a single line break.
+				{
+					lastBreakOffs = 0;
+					lastBreakChar = 0;
+					continue;
+				}
+				// Else fall through!
+				
+			case '\r':
+				lineNo++;
+				lastBreakOffs = x;
+				lastBreakChar = theCh;
+				break;
+		}
+	}
+	
+	return lineNo;
 }
 
 
@@ -1432,5 +1474,28 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 {
 	[self.delegate textViewControllerHandleEnterKey: self];
 }
+
+
+-(void)		syntaxColoredTextView: (ULISyntaxColoredTextView*)sender willInsertSnippetInRange: (NSRange*)insertionRange
+{
+	if( [self.delegate respondsToSelector: @selector(textViewController:willInsertSnippetInRange:)] )
+	{
+		[self.delegate textViewController: self willInsertSnippetInRange: insertionRange];
+	}
+}
+
+
+-(NSString*) syntaxColoredTextView: (ULISyntaxColoredTextView*)sender stringForSnippetOnPasteboard: (NSPasteboard*)pboard
+{
+	if( [self.delegate respondsToSelector: @selector(textViewController:stringForSnippetOnPasteboard:)] )
+	{
+		return [self.delegate textViewController: self stringForSnippetOnPasteboard: pboard];
+	}
+	else
+	{
+		return [pboard stringForType: sender.customSnippetPasteboardType];
+	}
+}
+
 
 @end

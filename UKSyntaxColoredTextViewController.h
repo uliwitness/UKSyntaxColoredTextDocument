@@ -63,6 +63,9 @@
 -(void) textViewControllerHandleEnterKey: (UKSyntaxColoredTextViewController*)sender;
 -(void) textViewControllerTextDidChange: (UKSyntaxColoredTextViewController*)sender;
 
+-(void) textViewController: (UKSyntaxColoredTextViewController*)sender willInsertSnippetInRange: (NSRange*)insertionRange;	// Adjust insertionRange if it is not appropriate, or set its location to NSNotFound to not insert. If the text view's customSnippetsInsertionGranularity == NSSelectByParagraph, the insertion location is either the start of a line, or after the end of the text.
+-(NSString*) textViewController: (UKSyntaxColoredTextViewController*)sender stringForSnippetOnPasteboard: (NSPasteboard*)pboard;	// If your snippet flavor is not raw string data, implement this to unpack it into a string we can insert into the code. Not implementing this will result in -stringForType: being called on the pasteboard and inserting that.
+
 @end
 
 
@@ -101,6 +104,9 @@
 -(void)		goToLine: (NSUInteger)lineNum;
 -(void)		goToCharacter: (NSUInteger)charNum;
 -(void)		goToRangeFrom: (NSUInteger)startCh toChar: (NSUInteger)endCh;
+
+-(NSUInteger)	lineAtOffset: (NSUInteger)startCh;
+-(NSRange)		rangeForLine: (NSUInteger)lineNum;
 
 // Override any of the following in one of your subclasses to customize this object further:
 -(NSString*)		syntaxDefinitionFilename;   // Defaults to "SyntaxDefinition.plist" in the app bundle's "Resources" directory.
