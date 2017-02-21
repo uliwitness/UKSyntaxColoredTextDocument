@@ -56,22 +56,6 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 @end
 
-@implementation ULISyntaxColoredTextCapsuleAttachmentCell
-
-- (void)drawWithFrame:(NSRect)cellFrame inView:(nullable NSView *)controlView
-{
-	[self.image drawInRect: cellFrame];
-}
-
-
-- (NSSize)cellSize
-{
-	return NSMakeSize(32,32);
-}
-
-@end
-
-
 @interface ULISyntaxColoredTextCapsuleAttachment : NSTextAttachment
 
 @property (copy) NSString*	stringRepresentation;
@@ -79,19 +63,47 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 @end
 
 
+
+
+@implementation ULISyntaxColoredTextCapsuleAttachmentCell
+
+- (void)drawWithFrame:(NSRect)cellFrame inView:(nullable NSView *)controlView
+{
+	[[NSColor lightGrayColor] set];
+	[[NSBezierPath bezierPathWithRoundedRect: cellFrame xRadius: 4 yRadius: 4] fill];
+	[[(ULISyntaxColoredTextCapsuleAttachment*)self.attachment stringRepresentation] drawInRect: cellFrame withAttributes: self.textAttributes];
+}
+
+
+-(NSDictionary*) textAttributes
+{
+	return @{ NSFontAttributeName: [NSFont userFixedPitchFontOfSize: 10], NSForegroundColorAttributeName: [NSColor blackColor] };
+}
+
+
+- (NSSize)cellSize
+{
+	NSSize theSize = [[(ULISyntaxColoredTextCapsuleAttachment*)self.attachment stringRepresentation] sizeWithAttributes: self.textAttributes];
+	theSize.width += 1;
+	return theSize;
+}
+
+@end
+
+
 @implementation ULISyntaxColoredTextCapsuleAttachment
 
--(instancetype)	initWithData:(NSData *)contentData ofType:(NSString *)uti
+-(instancetype)	initWithFileWrapper:(NSFileWrapper *)fileWrapper
 {
-	self = [super initWithData: [[NSImage imageNamed: NSImageNameApplicationIcon] TIFFRepresentation] ofType: uti];
+	self = [super initWithFileWrapper: fileWrapper];
 	if( self )
 	{
-		self.image = [NSImage imageNamed: NSImageNameApplicationIcon];
-		self.attachmentCell = [[[ULISyntaxColoredTextCapsuleAttachmentCell alloc] initImageCell: self.image] autorelease];
+		self.attachmentCell = [[[ULISyntaxColoredTextCapsuleAttachmentCell alloc] initTextCell: @""] autorelease];
 		self.attachmentCell.attachment = self;
 	}
 	return self;
 }
+
 
 -(void)	dealloc
 {
@@ -1305,10 +1317,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			#if CAPSULE_SUPPORT
 			if( useAttachment )
 			{
-//				ULISyntaxColoredTextCapsuleAttachment*	att = nil;
-//				att = [[ULISyntaxColoredTextCapsuleAttachment alloc] initWithData: nil ofType: (NSString*)kUTTypePlainText];
-//				att.stringRepresentation = [s.string substringWithRange: NSMakeRange( vStartOffs, [ident length] )];
-				NSTextAttachment * att = [[NSTextAttachment alloc] initWithFileWrapper: [[NSFileWrapper alloc] initWithURL: [NSBundle.mainBundle URLForImageResource: @"BackgroundIconSmall"] options: 0 error: NULL]];
+				ULISyntaxColoredTextCapsuleAttachment*	att = [[ULISyntaxColoredTextCapsuleAttachment alloc] initWithFileWrapper: nil];
+				att.stringRepresentation = [s.string substringWithRange: NSMakeRange( vStartOffs, [ident length] )];
 				[vStyles setObject: att forKey: NSAttachmentAttributeName];
 				[att release];
 			}
