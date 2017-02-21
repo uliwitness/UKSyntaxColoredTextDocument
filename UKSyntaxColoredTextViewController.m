@@ -49,6 +49,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 #define	TEXTVIEW		((ULISyntaxColoredTextView*)[self view])
 
+#define CAPSULE_SUPPORT	1
+
 
 @interface ULISyntaxColoredTextCapsuleAttachmentCell : NSTextAttachmentCell
 
@@ -85,7 +87,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	if( self )
 	{
 		self.image = [NSImage imageNamed: NSImageNameApplicationIcon];
-		self.attachmentCell = [[[ULISyntaxColoredTextCapsuleAttachmentCell alloc] initTextCell: @"HEY!"] autorelease];
+		self.attachmentCell = [[[ULISyntaxColoredTextCapsuleAttachmentCell alloc] initImageCell: self.image] autorelease];
 		self.attachmentCell.attachment = self;
 	}
 	return self;
@@ -99,6 +101,10 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 
 @end
 
+
+@interface UKSyntaxColoredTextViewController () <NSTextStorageDelegate>
+
+@end
 
 @implementation UKSyntaxColoredTextViewController
 
@@ -139,23 +145,13 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 }
 
 
--(void)	dealloc
-{
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	
-	[super dealloc];
-}
-
-
 -(void)	setUpSyntaxColoring
 {
 	// Set up some sensible defaults for syntax coloring:
 	[[self class] makeSurePrefsAreInited];
 	
 	// Register for "text changed" notifications of our text storage:
-	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(processEditing:)
-					name: NSTextStorageDidProcessEditingNotification
-					object: [TEXTVIEW textStorage]];
+	TEXTVIEW.textStorage.delegate = self;
 	
 	// Make sure text isn't wrapped:
 	[self turnOffWrapping];
@@ -207,88 +203,87 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 //		Part of the text was changed. Recolor it.
 // -----------------------------------------------------------------------------
 
--(void) processEditing: (NSNotification*)notification
+- (void)textStorage:(NSTextStorage *)textStorage willProcessEditing:(NSTextStorageEditActions)editedMask range:(NSRange)range changeInLength:(NSInteger)changeInLen
 {
-    NSTextStorage	*textStorage = [notification object];
-	NSRange			range = [textStorage editedRange];
-	NSUInteger		changeInLen = [textStorage changeInLength];
-	BOOL			wasInUndoRedo = [[self undoManager] isUndoing] || [[self undoManager] isRedoing];
-	BOOL			textLengthMayHaveChanged = NO;
-	
-	// Was delete op or undo that could have changed text length?
-	if( wasInUndoRedo )
+	if( editedMask & NSTextStorageEditedCharacters )
 	{
-		textLengthMayHaveChanged = YES;
-		range = [TEXTVIEW selectedRange];
-	}
-	if( changeInLen <= 0 )
-		textLengthMayHaveChanged = YES;
-	
-	//	Try to get chars around this to recolor any identifier we're in:
-	if( textLengthMayHaveChanged )
-	{
-		if( range.location > 0 )
-			range.location--;
-		if( (range.location +range.length +2) < [textStorage length] )
-			range.length += 2;
-		else if( (range.location +range.length +1) < [textStorage length] )
-			range.length += 1;
-	}
-	
-	NSRange						currRange = range;
-    
-	// Perform the syntax coloring:
-	if( autoSyntaxColoring && range.length > 0 )
-	{
-		NSRange			effectiveRange;
-		NSString*		rangeMode;
+		BOOL			wasInUndoRedo = [[self undoManager] isUndoing] || [[self undoManager] isRedoing];
+		BOOL			textLengthMayHaveChanged = NO;
 		
-		
-		rangeMode = [textStorage attribute: TD_SYNTAX_COLORING_MODE_ATTR
-								atIndex: currRange.location
-								effectiveRange: &effectiveRange];
-		
-		NSUInteger		x = range.location;
-		
-		/* TODO: If we're in a multi-line comment and we're typing a comment-end
-			character, or we're in a string and we're typing a quote character,
-			this should include the rest of the text up to the next comment/string
-			end character in the recalc. */
-		
-		// Scan up to prev line break:
-		while( x > 0 )
+		// Was delete op or undo that could have changed text length?
+		if( wasInUndoRedo )
 		{
-			unichar theCh = [[textStorage string] characterAtIndex: x];
-			if( theCh == '\n' || theCh == '\r' )
-				break;
-			--x;
+			textLengthMayHaveChanged = YES;
+			range = [TEXTVIEW selectedRange];
+		}
+		if( changeInLen <= 0 )
+			textLengthMayHaveChanged = YES;
+		
+		//	Try to get chars around this to recolor any identifier we're in:
+		if( textLengthMayHaveChanged )
+		{
+			if( range.location > 0 )
+				range.location--;
+			if( (range.location +range.length +2) < [textStorage length] )
+				range.length += 2;
+			else if( (range.location +range.length +1) < [textStorage length] )
+				range.length += 1;
 		}
 		
-		currRange.location = x;
+		NSRange						currRange = range;
 		
-		// Scan up to next line break:
-		x = range.location +range.length;
-		
-		while( x < [textStorage length] )
+		// Perform the syntax coloring:
+		if( autoSyntaxColoring && range.length > 0 )
 		{
-			unichar theCh = [[textStorage string] characterAtIndex: x];
-			if( theCh == '\n' || theCh == '\r' )
-				break;
-			++x;
+			NSRange			effectiveRange;
+			NSString*		rangeMode;
+			
+			rangeMode = [textStorage attribute: TD_SYNTAX_COLORING_MODE_ATTR
+									atIndex: currRange.location
+									effectiveRange: &effectiveRange];
+			
+			NSUInteger		x = range.location;
+			
+			/* TODO: If we're in a multi-line comment and we're typing a comment-end
+				character, or we're in a string and we're typing a quote character,
+				this should include the rest of the text up to the next comment/string
+				end character in the recalc. */
+			
+			// Scan up to prev line break:
+			while( x > 0 )
+			{
+				unichar theCh = [[textStorage string] characterAtIndex: x];
+				if( theCh == '\n' || theCh == '\r' )
+					break;
+				--x;
+			}
+			
+			currRange.location = x;
+			
+			// Scan up to next line break:
+			x = range.location +range.length;
+			
+			while( x < [textStorage length] )
+			{
+				unichar theCh = [[textStorage string] characterAtIndex: x];
+				if( theCh == '\n' || theCh == '\r' )
+					break;
+				++x;
+			}
+			
+			currRange.length = x -currRange.location;
+			
+			// Open identifier, comment etc.? Make sure we include the whole range.
+			if( rangeMode != nil )
+				currRange = NSUnionRange( currRange, effectiveRange );
+			
+			// Actually recolor the changed part:
+			[self recolorRange: currRange];
 		}
 		
-		currRange.length = x -currRange.location;
-		
-		// Open identifier, comment etc.? Make sure we include the whole range.
-		if( rangeMode != nil )
-			currRange = NSUnionRange( currRange, effectiveRange );
-		
-		// Actually recolor the changed part:
-		[self recolorRange: currRange];
+		if( [self.delegate respondsToSelector: @selector(textViewControllerTextDidChange:)] )
+			[self.delegate textViewControllerTextDidChange: self];
 	}
-	
-	if( [self.delegate respondsToSelector: @selector(textViewControllerTextDidChange:)] )
-		[self.delegate textViewControllerTextDidChange: self ];
 }
 
 
@@ -1310,9 +1305,10 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			#if CAPSULE_SUPPORT
 			if( useAttachment )
 			{
-				ULISyntaxColoredTextCapsuleAttachment*	att = nil;
-				att = [[ULISyntaxColoredTextCapsuleAttachment alloc] initWithData: nil ofType: (NSString*)kUTTypePlainText];
-				att.stringRepresentation = [s.string substringWithRange: NSMakeRange( vStartOffs, [ident length] )];
+//				ULISyntaxColoredTextCapsuleAttachment*	att = nil;
+//				att = [[ULISyntaxColoredTextCapsuleAttachment alloc] initWithData: nil ofType: (NSString*)kUTTypePlainText];
+//				att.stringRepresentation = [s.string substringWithRange: NSMakeRange( vStartOffs, [ident length] )];
+				NSTextAttachment * att = [[NSTextAttachment alloc] initWithFileWrapper: [[NSFileWrapper alloc] initWithURL: [NSBundle.mainBundle URLForImageResource: @"BackgroundIconSmall"] options: 0 error: NULL]];
 				[vStyles setObject: att forKey: NSAttachmentAttributeName];
 				[att release];
 			}
