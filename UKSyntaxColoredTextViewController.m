@@ -1121,7 +1121,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 -(void)	colorStringsFrom: (NSString*) startCh to: (NSString*) endCh inString: (NSMutableAttributedString*) s
 							withColor: (NSColor*) col andMode:(NSString*)attr andEscapeChar: (NSString*)vStringEscapeCharacter
 {
-	NS_DURING
+	@try
+	{
 		NSScanner*			vScanner = [NSScanner scannerWithString: [s string]];
 		NSDictionary*		vStyles = [self textAttributesForComponentName: attr color: col];
 		BOOL				vIsEndChar = NO;
@@ -1147,7 +1148,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			[vScanner scanUpToString: startCh intoString: nil];
 			vStartOffs = [vScanner scanLocation];
 			if( ![vScanner scanString:startCh intoString:nil] )
-				NS_VOIDRETURN;
+				return;
 
 			while( !vIsEndChar && ![vScanner isAtEnd] )	// Loop until we find end-of-string marker or our text to color is finished:
 			{
@@ -1166,9 +1167,16 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			// Now mess with the string's styles:
 			[s setAttributes: vStyles range: NSMakeRange( vStartOffs, vEndOffs -vStartOffs )];
 		}
-	NS_HANDLER
+	}
+	@catch( NSException* exc )
+	{
+		NSLog( @"internal error during syntax coloring: %@", exc );
 		// Just ignore it, syntax coloring isn't that important.
-	NS_ENDHANDLER
+	}
+	@catch( ... )
+	{
+		// Just ignore it, syntax coloring isn't that important.
+	}
 }
 
 
