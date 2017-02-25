@@ -801,10 +801,33 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			range.length += diff;
 				
 		// Get the text we'll be working with:
-		NSDictionary*				vStyles = [self defaultTextAttributes];
-		NSMutableAttributedString*	vString = [[NSMutableAttributedString alloc] initWithString: [[[TEXTVIEW textStorage] string] substringWithRange: range] attributes: vStyles];
-		[vString autorelease];
+		NSMutableAttributedString*	vString = [[NSMutableAttributedString alloc] initWithAttributedString: [TEXTVIEW textStorage]];
+		
+		// Restore raw text for each capsule:
+		//	(otherwise the capsules will just disappear later)
+		NSRange currRange = {};
+		while( (currRange.location + currRange.length) < vString.length )
+		{
+			NSRange effectiveRange = {};
+			ULISyntaxColoredTextCapsuleAttachment * capsule = [vString attribute: NSAttachmentAttributeName atIndex: currRange.location effectiveRange: &effectiveRange];
+			if( capsule )
+			{
+				[vString replaceCharactersInRange: effectiveRange withString: capsule.stringRepresentation];
 				
+				currRange.location = effectiveRange.location + capsule.stringRepresentation.length;
+				currRange.length = 0;
+			}
+			else
+			{
+				currRange.location += 1;
+				currRange.length = 0;
+			}
+		}
+		
+		// Remove all old styles and apply our base font & style:
+		NSDictionary*				vStyles = [self defaultTextAttributes];
+		vString = [[[NSMutableAttributedString alloc] initWithString: [[vString string] substringWithRange: range] attributes: vStyles] autorelease];
+		
 		// Load colors and fonts to use from preferences:
 		// Load our dictionary which contains info on coloring this language:
 		NSDictionary*				vSyntaxDefinition = [self syntaxDefinitionDictionary];
