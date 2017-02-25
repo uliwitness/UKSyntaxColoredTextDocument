@@ -178,9 +178,8 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 	[self textView: TEXTVIEW willChangeSelectionFromCharacterRange: startSelRange
 					toCharacterRange: startSelRange];	// Update UI to show selection.
 	
-	// Make sure we can use "find" if we're on 10.3:
-	if( [TEXTVIEW respondsToSelector: @selector(setUsesFindPanel:)] )
-		[TEXTVIEW setUsesFindPanel: YES];
+	// Make sure we can use "find":
+	[TEXTVIEW setUsesFindPanel: YES];
 }
 
 
