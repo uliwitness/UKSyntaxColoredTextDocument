@@ -25,7 +25,7 @@
 //	   distribution.
 //
 
-#import "UKTextDocGotoBox.h"
+#import "UKTextDocGoToBox.h"
 
 @implementation UKTextDocGoToBox
 
