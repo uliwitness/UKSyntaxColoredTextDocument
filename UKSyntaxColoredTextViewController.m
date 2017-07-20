@@ -214,9 +214,15 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 //		Part of the text was changed. Recolor it.
 // -----------------------------------------------------------------------------
 
-- (void)textStorage:(NSTextStorage *)textStorage willProcessEditing:(NSTextStorageEditActions)editedMask range:(NSRange)range changeInLength:(NSInteger)changeInLen
+//- (void)textStorage:(NSTextStorage *)textStorage willProcessEditing:(NSTextStorageEditActions)editedMask range:(NSRange)range changeInLength:(NSInteger)changeInLen
+//{
+//	
+//}
+
+
+- (void)textStorage:(NSTextStorage *)textStorage didProcessEditing:(NSTextStorageEditActions)editedMask range:(NSRange)range changeInLength:(NSInteger)changeInLen
 {
-	if( editedMask & NSTextStorageEditedCharacters )
+	if( editedMask & NSTextStorageEditedCharacters && !textDidChangeBusy )
 	{
 		BOOL			wasInUndoRedo = [[self undoManager] isUndoing] || [[self undoManager] isRedoing];
 		BOOL			textLengthMayHaveChanged = NO;
@@ -292,9 +298,17 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 			[self recolorRange: currRange];
 		}
 		
-		if( [self.delegate respondsToSelector: @selector(textViewControllerTextDidChange:)] )
-			[self.delegate textViewControllerTextDidChange: self];
+		[self performSelector: @selector(sendTextDidChangeToDelegate) withObject: nil afterDelay: 0.0];
 	}
+}
+
+
+-(void) sendTextDidChangeToDelegate
+{
+	textDidChangeBusy = YES;	// Avoid (asynchronous) recursion in textStorage:didProcessEditing: above.
+	if( [self.delegate respondsToSelector: @selector(textViewControllerTextDidChange:)] )
+		[self.delegate textViewControllerTextDidChange: self];
+	textDidChangeBusy = NO;
 }
 
 

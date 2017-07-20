@@ -80,6 +80,7 @@
 	BOOL								maintainIndentation;	// Keep new lines indented at same depth as their predecessor?
 	id									reserved;
 	BOOL								syntaxColoringBusy;		// Set while recolorRange is busy, so we don't recursively call recolorRange.
+	BOOL								textDidChangeBusy;		// Set while we send textViewControllerTextDidChange: so changes the delegate does to the text doesn't cause us to re-send the message and infinitely recurse.
 	IBOutlet id<UKSyntaxColoredTextViewDelegate>	delegate;
 }
 
