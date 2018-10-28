@@ -30,7 +30,7 @@
 
 -(BOOL)	becomeFirstResponder
 {
-	[self setState: NSOnState];
+	[self setState: NSControlStateValueOn];
 	[[NSFontPanel sharedFontPanel] setPanelFont: self.pickedFont isMultiple: NO];
 	return YES;
 }
@@ -39,7 +39,7 @@
 -(BOOL)	resignFirstResponder
 {
 	NSLog(@"resignFirstResponder");
-	[self setState: NSOffState];
+	[self setState: NSControlStateValueOff];
 	return YES;
 }
 

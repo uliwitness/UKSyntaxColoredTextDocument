@@ -47,7 +47,7 @@
 {
 	CGFloat			fRed = 0, fGreen = 0, fBlue = 0, fAlpha = 1.0;
 	
-	col = [col colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+	col = [col colorUsingColorSpace: NSColorSpace.genericRGBColorSpace];
 	[col getRed: &fRed green: &fGreen blue: &fBlue alpha: &fAlpha];
 	
 	return [self arrayWithObjects: [NSNumber numberWithFloat:fRed], [NSNumber numberWithFloat:fGreen],

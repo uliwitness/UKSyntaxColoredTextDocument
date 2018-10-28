@@ -228,7 +228,7 @@
 }
 
 
--(NSUInteger) validModesForFontPanel: (NSFontPanel *)fontPanel
+-(NSFontPanelModeMask) validModesForFontPanel: (NSFontPanel *)fontPanel
 {
 	return 0;
 }
