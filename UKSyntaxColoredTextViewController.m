@@ -415,6 +415,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		lastBreakChar = theCh;
 	}
 	
+	if( lineNum > currLine )
+	{
+		theRange = NSMakeRange(vString.length, 0);
+	}
+	
 	return theRange;
 }
 
@@ -1535,11 +1540,11 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 }
 
 
--(NSString*) syntaxColoredTextView: (ULISyntaxColoredTextView*)sender stringForSnippetOnPasteboard: (NSPasteboard*)pboard
+-(NSString*) syntaxColoredTextView: (ULISyntaxColoredTextView*)sender stringForSnippetOnPasteboard: (NSPasteboard*)pboard forRange: (NSRange)dropRange
 {
-	if( [self.delegate respondsToSelector: @selector(textViewController:stringForSnippetOnPasteboard:)] )
+	if( [self.delegate respondsToSelector: @selector(textViewController:stringForSnippetOnPasteboard:forRange:)] )
 	{
-		return [self.delegate textViewController: self stringForSnippetOnPasteboard: pboard];
+		return [self.delegate textViewController: self stringForSnippetOnPasteboard: pboard forRange: dropRange];
 	}
 	else
 	{

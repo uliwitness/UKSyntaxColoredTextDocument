@@ -281,15 +281,15 @@
 	{
 		[self.undoManager beginUndoGrouping];
 		NSString * theString = nil;
+		NSRange selectedRange = self.rangeForUserTextChange;
 		if( [self.delegate respondsToSelector: @selector(syntaxColoredTextView:willInsertSnippetInRange:)] )
 		{
-			theString = [(id<ULISyntaxColoredTextViewDelegate>)self.delegate syntaxColoredTextView: self stringForSnippetOnPasteboard: pboard];
+			theString = [(id<ULISyntaxColoredTextViewDelegate>)self.delegate syntaxColoredTextView: self stringForSnippetOnPasteboard: pboard forRange: selectedRange];
 		}
 		else
 		{
 			theString = [pboard stringForType: self.customSnippetPasteboardType];
 		}
-		NSRange selectedRange = self.rangeForUserTextChange;
 		[self insertText: theString replacementRange: selectedRange];
 		[self.undoManager endUndoGrouping];
 		
