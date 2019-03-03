@@ -765,7 +765,7 @@ static BOOL			sSyntaxColoredTextDocPrefsInited = NO;
 		return YES;
 	}
 	else
-		return [super validateMenuItem: menuItem];
+		return [self respondsToSelector: menuItem.action];
 }
 
 
